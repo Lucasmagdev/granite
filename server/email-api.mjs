@@ -123,7 +123,87 @@ function json(res, status, payload) {
   res.end(JSON.stringify(payload));
 }
 
-async function sendLeadEmail(lead) {
+function completionHtml(lead) {
+  return `
+    <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:28px;">
+      <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background:linear-gradient(135deg,#059669,#10b981);color:#ffffff;padding:32px 24px;text-align:center;">
+          <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+          <h1 style="margin:0;font-size:28px;font-family:Georgia,serif;">Your Project is Complete!</h1>
+          <p style="margin:8px 0 0;opacity:0.85;font-size:15px;">St. Joseph Granite</p>
+        </div>
+        <div style="padding:32px 24px;color:#171717;">
+          <p style="font-size:17px;line-height:1.6;margin:0 0 16px;">Hi <strong>${escapeHtml(lead.name || 'there')}</strong>,</p>
+          <p style="font-size:15px;line-height:1.7;margin:0 0 16px;color:#4b5563;">
+            We are thrilled to let you know that your <strong>${escapeHtml(lead.project_type)}</strong> project has been successfully completed. Thank you for trusting St. Joseph Granite with your home!
+          </p>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:20px;margin:24px 0;">
+            <p style="margin:0 0 10px;color:#166534;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Project Summary</p>
+            <p style="margin:0 0 6px;font-size:14px;color:#171717;"><strong>Type:</strong> ${escapeHtml(lead.project_type)}</p>
+            <p style="margin:0;font-size:14px;color:#171717;"><strong>Stone:</strong> ${escapeHtml(lead.stone_type)}</p>
+          </div>
+          <p style="font-size:15px;line-height:1.7;margin:0 0 24px;color:#4b5563;">
+            We would love to hear your feedback! If you are happy with the result, a quick review would mean the world to us and help other homeowners find quality service.
+          </p>
+          <div style="border-top:1px solid #e5e7eb;padding-top:20px;">
+            <p style="margin:0 0 6px;font-size:13px;color:#737373;">Questions? Contact us anytime:</p>
+            <p style="margin:0;font-size:15px;color:#171717;font-weight:600;">📞 (774) 433-2580</p>
+          </div>
+        </div>
+        <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 24px;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#9ca3af;">St. Joseph Granite · Serving New England</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function customHtml(lead, subject, message) {
+  return `
+    <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:28px;">
+      <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background:#b91c1c;color:#ffffff;padding:24px;">
+          <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">${escapeHtml(subject)}</h1>
+          <p style="margin:8px 0 0;opacity:0.85;font-size:13px;">St. Joseph Granite</p>
+        </div>
+        <div style="padding:24px;color:#171717;">
+          <p style="font-size:15px;line-height:1.8;margin:0;white-space:pre-line;">${escapeHtml(message)}</p>
+        </div>
+        <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 24px;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#9ca3af;">St. Joseph Granite · (774) 433-2580</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function sendLeadEmail(lead, type = 'lead', extra = {}) {
+  if (type === 'custom') {
+    if (!lead.email) return [];
+    const subject = extra.subject || 'Mensagem da St. Joseph Granite';
+    const message = extra.message || '';
+    const result = await transporter.sendMail({
+      from: emailFrom,
+      to: lead.email,
+      subject,
+      html: customHtml(lead, subject, message),
+      text: message,
+    });
+    return [{ messageId: result.messageId, accepted: result.accepted }];
+  }
+
+  if (type === 'completion') {
+    if (!lead.email) return [];
+    const result = await transporter.sendMail({
+      from: emailFrom,
+      to: lead.email,
+      subject: `Your project is complete! — St. Joseph Granite`,
+      html: completionHtml(lead),
+      text: `Hi ${lead.name || 'there'}, your ${lead.project_type} project with St. Joseph Granite is complete! Thank you for choosing us. (774) 433-2580`,
+    });
+    return [{ messageId: result.messageId, accepted: result.accepted }];
+  }
+
   const recipients = emailNotifyTo.split(',').map((item) => item.trim()).filter(Boolean);
 
   const results = [];
@@ -162,13 +242,13 @@ const server = http.createServer(async (req, res) => {
 
   try {
     const body = await readBody(req);
-    const { lead } = JSON.parse(body || '{}');
+    const { lead, type, subject, message } = JSON.parse(body || '{}');
     if (!lead) {
       json(res, 400, { error: 'Missing lead.' });
       return;
     }
 
-    const results = await sendLeadEmail(lead);
+    const results = await sendLeadEmail(lead, type, { subject, message });
     json(res, 200, { ok: true, results });
   } catch (error) {
     json(res, 500, { error: error instanceof Error ? error.message : 'Unknown error' });

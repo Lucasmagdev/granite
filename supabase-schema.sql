@@ -13,6 +13,7 @@ create table if not exists public.estimate_requests (
   photo_names text[] default '{}',
   contacted boolean not null default false,
   contacted_at timestamptz,
+  interest_level text check (interest_level in ('hot', 'warm', 'cold')),
   status text not null default 'new' check (status in ('new', 'contacted', 'quoted', 'won', 'lost')),
   notes text,
   source text not null default 'website'
@@ -21,9 +22,19 @@ create table if not exists public.estimate_requests (
 alter table public.estimate_requests
   add column if not exists contacted boolean not null default false,
   add column if not exists contacted_at timestamptz,
+  add column if not exists interest_level text,
   add column if not exists status text not null default 'new',
   add column if not exists notes text,
   add column if not exists source text not null default 'website';
+
+do $$
+begin
+  alter table public.estimate_requests
+    add constraint estimate_requests_interest_level_check
+    check (interest_level in ('hot', 'warm', 'cold'));
+exception
+  when duplicate_object then null;
+end $$;
 
 alter table public.estimate_requests enable row level security;
 

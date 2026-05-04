@@ -122,8 +122,36 @@ const nginxConfig = `server {
     listen [::]:80;
     server_name ${domain};
 
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ${domain};
+
     root ${remoteRoot};
     index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location = /api/send-email {
+        proxy_pass http://127.0.0.1:3101/api/send-email;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 
     location / {
         try_files $uri $uri/ /index.html;
@@ -154,9 +182,9 @@ try {
   await exec('nginx -t');
   await exec('systemctl reload nginx || service nginx reload');
 
-  const result = await exec(`curl -I --max-time 10 http://${domain} | head -n 1`);
+  const result = await exec(`curl -I --max-time 10 https://${domain} | head -n 1`);
   console.log(result.stdout.trim());
-  console.log(`Deployed http://${domain}`);
+  console.log(`Deployed https://${domain}`);
 } finally {
   conn.end();
 }

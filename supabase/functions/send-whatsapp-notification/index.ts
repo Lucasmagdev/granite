@@ -84,7 +84,8 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const lead = body.lead as EstimateLead;
-    const text = buildMessage(lead);
+    const sendTo = body.to || notifyTo;
+    const text = body.message || buildMessage(lead);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
@@ -101,7 +102,7 @@ Deno.serve(async (req) => {
             apikey: evolutionApiKey,
           },
           body: JSON.stringify({
-            number: notifyTo,
+            number: sendTo,
             text,
           }),
         },

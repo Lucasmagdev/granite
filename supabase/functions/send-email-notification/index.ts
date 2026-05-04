@@ -149,7 +149,7 @@ async function sendEmail(input: {
   return response.json();
 }
 
-async function sendViaEmailApi(lead: EstimateLead) {
+async function sendViaEmailApi(lead: EstimateLead, type = 'lead', extra: Record<string, string> = {}) {
   const emailApiUrl = Deno.env.get('EMAIL_API_URL');
   const emailApiSecret = Deno.env.get('EMAIL_API_SECRET');
 
@@ -161,7 +161,7 @@ async function sendViaEmailApi(lead: EstimateLead) {
       'Content-Type': 'application/json',
       'x-email-api-secret': emailApiSecret,
     },
-    body: JSON.stringify({ lead }),
+    body: JSON.stringify({ lead, type, ...extra }),
   });
 
   if (!response.ok) {
@@ -185,8 +185,11 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { lead } = await req.json() as { lead: EstimateLead };
-    const apiResult = await sendViaEmailApi(lead);
+    const { lead, type, subject, message } = await req.json() as { lead: EstimateLead; type?: string; subject?: string; message?: string };
+    const extra: Record<string, string> = {};
+    if (subject) extra.subject = subject;
+    if (message) extra.message = message;
+    const apiResult = await sendViaEmailApi(lead, type, extra);
     if (apiResult) {
       return new Response(JSON.stringify({ ok: true, provider: 'email-api', results: apiResult }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
