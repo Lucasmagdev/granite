@@ -79,6 +79,14 @@ const emptyLead = {
   measurements: '', timeline: 'ASAP', comments: '', notes: '',
 };
 
+const defaultBulkMessage = [
+  'Hi {nome}, this is St. Joseph Granite.',
+  '',
+  'We are reaching out about your {projeto} project with {pedra}.',
+  '',
+  'If you have any questions or want to move forward, call us at (774) 433-2580.',
+].join('\n');
+
 const statusConfig: Record<LeadStatus, { label: string; bg: string; text: string; border: string; dot: string }> = {
   new:       { label: 'Novo',       bg: 'bg-blue-50',   text: 'text-blue-700',   border: 'border-blue-200',   dot: 'bg-blue-400' },
   contacted: { label: 'Contatado',  bg: 'bg-amber-50',  text: 'text-amber-700',  border: 'border-amber-200',  dot: 'bg-amber-400' },
@@ -116,6 +124,17 @@ function buildCompletionMessage(lead: Lead) {
     '',
     'Thank you for choosing St. Joseph Granite!',
   ].join('\n');
+}
+
+function normalizeWhatsAppNumber(phone?: string | null) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.length === 10) return `1${digits}`;
+  return digits;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -269,7 +288,7 @@ function BulkMessageModal({
               onClick={() => setChannel('whatsapp')}
               className={`flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${channel === 'whatsapp' ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
             >
-              <MessageCircle size={15} /> WhatsApp
+              <MessageCircle size={15} /> WhatsApp via Evolution
             </button>
             <button
               onClick={() => setChannel('email')}
@@ -447,7 +466,7 @@ function LeadCard({
       <div className="px-4 pb-4 mt-auto flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <a
-            href={`https://wa.me/1${lead.phone.replace(/\D/g, '')}`}
+            href={`https://wa.me/${normalizeWhatsAppNumber(lead.phone)}`}
             target="_blank" rel="noreferrer"
             title="Abrir WhatsApp"
             className="rounded-lg border border-gray-200 p-2 text-gray-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition"
@@ -725,7 +744,7 @@ export default function AdminDashboard() {
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkModal, setShowBulkModal] = useState(false);
-  const [bulkMessage, setBulkMessage] = useState('');
+  const [bulkMessage, setBulkMessage] = useState(defaultBulkMessage);
   const [bulkSubject, setBulkSubject] = useState('Mensagem da St. Joseph Granite');
 
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -806,6 +825,11 @@ export default function AdminDashboard() {
     });
   }, [leads, interestFilter]);
 
+  const visibleSelectionLeads = useMemo(
+    () => (activeTab === 'clientes' ? filteredLeads : filteredFormLeads),
+    [activeTab, filteredLeads, filteredFormLeads],
+  );
+
   const stats = useMemo(() => ({
     total: leads.length,
     newCount: leads.filter((l) => !l.contacted && (!l.status || l.status === 'new')).length,
@@ -851,7 +875,7 @@ export default function AdminDashboard() {
     const lead = completingLead;
     setCompleting(true);
     await updateLead(lead.id, { status: 'won', contacted: true, contacted_at: lead.contacted_at || new Date().toISOString() });
-    const clientPhone = '1' + lead.phone.replace(/\D/g, '');
+    const clientPhone = normalizeWhatsAppNumber(lead.phone);
     const [waResult, emailResult] = await Promise.allSettled([
       supabase.functions.invoke('send-whatsapp-notification', { body: { lead, to: clientPhone, message: buildCompletionMessage(lead) } }),
       supabase.functions.invoke('send-email-notification', { body: { lead, type: 'completion' } }),
@@ -869,19 +893,43 @@ export default function AdminDashboard() {
     msg.replace(/{nome}/g, lead.name).replace(/{projeto}/g, lead.project_type).replace(/{pedra}/g, lead.stone_type);
 
   const sendBulkWhatsApp = async () => {
+    const targets = selectedLeads.filter((lead) => normalizeWhatsAppNumber(lead.phone));
+    if (!targets.length) {
+      addToast('Nenhum cliente selecionado tem telefone vÃ¡lido para WhatsApp.', 'warning');
+      return;
+    }
+
     setBulkSending(true);
     let ok = 0, fail = 0;
-    for (const lead of selectedLeads) {
+    const okIds: string[] = [];
+
+    for (const lead of targets) {
       const msg = applyMessageVars(bulkMessage, lead);
-      const clientPhone = '1' + lead.phone.replace(/\D/g, '');
+      const clientPhone = normalizeWhatsAppNumber(lead.phone);
       const { error } = await supabase.functions.invoke('send-whatsapp-notification', { body: { lead, to: clientPhone, message: msg } });
-      if (error) fail++; else ok++;
+      if (error) {
+        fail++;
+      } else {
+        ok++;
+        okIds.push(lead.id);
+      }
+      await wait(350);
     }
+
+    if (okIds.length) {
+      const contactedAt = new Date().toISOString();
+      await supabase.from('estimate_requests').update({ contacted: true, contacted_at: contactedAt }).in('id', okIds);
+      setLeads((items) => items.map((lead) => (
+        okIds.includes(lead.id) ? { ...lead, contacted: true, contacted_at: contactedAt } : lead
+      )));
+    }
+
     setBulkSending(false);
     setShowBulkModal(false);
     setSelectedIds(new Set());
-    setBulkMessage('');
-    addToast(`WhatsApp: ${ok} enviado${ok !== 1 ? 's' : ''}${fail > 0 ? `, ${fail} falha${fail !== 1 ? 's' : ''}` : ''}.`, fail > 0 ? 'warning' : 'success');
+    setBulkMessage(defaultBulkMessage);
+    const skipped = selectedLeads.length - targets.length;
+    addToast(`WhatsApp Evolution: ${ok} enviado${ok !== 1 ? 's' : ''}${fail > 0 ? `, ${fail} falha${fail !== 1 ? 's' : ''}` : ''}${skipped > 0 ? `, ${skipped} sem telefone vÃ¡lido` : ''}.`, fail > 0 || skipped > 0 ? 'warning' : 'success');
   };
 
   const sendBulkEmail = async () => {
@@ -898,16 +946,19 @@ export default function AdminDashboard() {
     setBulkSending(false);
     setShowBulkModal(false);
     setSelectedIds(new Set());
-    setBulkMessage('');
+    setBulkMessage(defaultBulkMessage);
     addToast(`E-mail: ${ok} enviado${ok !== 1 ? 's' : ''}${fail > 0 ? `, ${fail} falha${fail !== 1 ? 's' : ''}` : ''}.`, fail > 0 ? 'warning' : 'success');
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredFormLeads.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filteredFormLeads.map((l) => l.id)));
-    }
+    const visibleIds = visibleSelectionLeads.map((l) => l.id);
+    const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+    setSelectedIds((ids) => {
+      const next = new Set(ids);
+      if (allVisibleSelected) visibleIds.forEach((id) => next.delete(id));
+      else visibleIds.forEach((id) => next.add(id));
+      return next;
+    });
   };
 
   if (!authChecked) return <div className="min-h-screen grid place-items-center text-gray-400 text-sm">Carregando...</div>;
@@ -1049,10 +1100,32 @@ export default function AdminDashboard() {
                   </form>
                 )}
 
+                <div className="border-b border-gray-100 bg-gray-50/70 px-5 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filteredLeads.length > 0 && filteredLeads.every((lead) => selectedIds.has(lead.id))}
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 rounded border-gray-300 accent-[#B91C1C] cursor-pointer"
+                    />
+                    Selecionar clientes exibidos
+                  </label>
+                  {selectedIds.size > 0 && (
+                    <button
+                      onClick={() => setShowBulkModal(true)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition"
+                    >
+                      <MessageCircle size={14} />
+                      Enviar WhatsApp/E-mail ({selectedIds.size})
+                    </button>
+                  )}
+                </div>
+
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[700px] text-left">
+                  <table className="w-full min-w-[760px] text-left">
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50/60">
+                        <th className="px-5 py-3 text-xs uppercase tracking-widest text-gray-400 font-medium">Sel.</th>
                         <th className="px-5 py-3 text-xs uppercase tracking-widest text-gray-400 font-medium">Cliente</th>
                         <th className="px-5 py-3 text-xs uppercase tracking-widest text-gray-400 font-medium">Projeto</th>
                         <th className="px-5 py-3 text-xs uppercase tracking-widest text-gray-400 font-medium">Interesse</th>
@@ -1063,14 +1136,28 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {loading ? (
-                        <tr><td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm">Carregando clientes...</td></tr>
+                        <tr><td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm">Carregando clientes...</td></tr>
                       ) : filteredLeads.length === 0 ? (
-                        <tr><td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm">Nenhum cliente encontrado.</td></tr>
+                        <tr><td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm">Nenhum cliente encontrado.</td></tr>
                       ) : filteredLeads.map((lead) => {
                         const leadStatus = (lead.status || (lead.contacted ? 'contacted' : 'new')) as LeadStatus;
                         const isWon = leadStatus === 'won';
                         return (
                           <tr key={lead.id} className={`hover:bg-gray-50/70 transition-colors ${selectedLead?.id === lead.id ? 'bg-red-50/20 border-l-2 border-l-[#B91C1C]' : ''}`}>
+                            <td className="px-5 py-4">
+                              <input
+                                type="checkbox"
+                                checked={selectedIds.has(lead.id)}
+                                onChange={() => {
+                                  setSelectedIds((ids) => {
+                                    const next = new Set(ids);
+                                    if (next.has(lead.id)) next.delete(lead.id); else next.add(lead.id);
+                                    return next;
+                                  });
+                                }}
+                                className="h-4 w-4 rounded border-gray-300 accent-[#B91C1C] cursor-pointer"
+                              />
+                            </td>
                             <td className="px-5 py-4">
                               <button onClick={() => setSelectedLead(lead)} className="flex items-center gap-3 text-left">
                                 <div className={`h-9 w-9 shrink-0 rounded-full grid place-items-center text-xs font-bold ${isWon ? 'bg-emerald-100 text-emerald-700' : 'bg-[#B91C1C]/10 text-[#B91C1C]'}`}>{initials(lead.name)}</div>
@@ -1100,7 +1187,7 @@ export default function AdminDashboard() {
                                 ) : (
                                   <span className="rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-500"><CheckCircle size={14} /></span>
                                 )}
-                                <a href={`https://wa.me/1${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" title="Abrir WhatsApp" className="rounded-lg border border-gray-200 p-2 text-gray-500 hover:bg-gray-50 hover:text-[#171717] transition"><MessageCircle size={14} /></a>
+                                <a href={`https://wa.me/${normalizeWhatsAppNumber(lead.phone)}`} target="_blank" rel="noreferrer" title="Abrir WhatsApp" className="rounded-lg border border-gray-200 p-2 text-gray-500 hover:bg-gray-50 hover:text-[#171717] transition"><MessageCircle size={14} /></a>
                                 <button onClick={() => deleteLead(lead)} title="Excluir cliente" className="rounded-lg border border-gray-200 p-2 text-gray-400 hover:bg-red-50 hover:text-[#B91C1C] hover:border-red-200 transition"><Trash2 size={14} /></button>
                               </div>
                             </td>
@@ -1242,7 +1329,7 @@ export default function AdminDashboard() {
                   <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={selectedIds.size === filteredFormLeads.length && filteredFormLeads.length > 0}
+                      checked={filteredFormLeads.length > 0 && filteredFormLeads.every((lead) => selectedIds.has(lead.id))}
                       onChange={toggleSelectAll}
                       className="h-4 w-4 rounded border-gray-300 accent-[#B91C1C] cursor-pointer"
                     />

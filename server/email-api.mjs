@@ -9,9 +9,21 @@ const emailFrom = process.env.EMAIL_FROM || `St. Joseph Granite <${smtpUser}>`;
 const emailNotifyTo = process.env.EMAIL_NOTIFY_TO;
 const sendCustomerConfirmation = process.env.EMAIL_SEND_CUSTOMER_CONFIRMATION !== 'false';
 
+// WhatsApp (Evolution API) — optional
+const evolutionApiUrl = process.env.EVOLUTION_API_URL?.replace(/\/$/, '');
+const evolutionApiKey = process.env.EVOLUTION_API_KEY;
+const evolutionInstanceName = process.env.EVOLUTION_INSTANCE_NAME;
+const whatsappNotifyTo = process.env.WHATSAPP_NOTIFY_TO;
+
 if (!apiSecret || !smtpUser || !smtpPass || !emailNotifyTo) {
   console.error('Missing EMAIL_API_SECRET, SMTP_USER, SMTP_PASS, or EMAIL_NOTIFY_TO.');
   process.exit(1);
+}
+
+if (evolutionApiUrl) {
+  console.log(`WhatsApp (Evolution) configured: instance=${evolutionInstanceName}`);
+} else {
+  console.log('WhatsApp not configured (EVOLUTION_API_URL not set).');
 }
 
 const transporter = nodemailer.createTransport({

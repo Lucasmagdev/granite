@@ -64,6 +64,29 @@ function buildMessage(lead: EstimateLead) {
   ].filter(Boolean).join('\n');
 }
 
+function ownerNumberFromJid(ownerJid?: string | null) {
+  return String(ownerJid || '').split('@')[0].replace(/\D/g, '');
+}
+
+async function connectedInstanceOwnerNumber(
+  evolutionApiUrl: string,
+  evolutionApiKey: string,
+  evolutionInstanceName: string,
+) {
+  const response = await fetch(`${evolutionApiUrl}/instance/fetchInstances`, {
+    headers: { apikey: evolutionApiKey },
+  });
+
+  if (!response.ok) return '';
+
+  const instances = await response.json();
+  const instance = Array.isArray(instances)
+    ? instances.find((item) => item.name === evolutionInstanceName)
+    : null;
+
+  return ownerNumberFromJid(instance?.ownerJid);
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -80,12 +103,21 @@ Deno.serve(async (req) => {
     const evolutionApiUrl = evolutionUrl();
     const evolutionApiKey = requiredEnv('EVOLUTION_API_KEY');
     const evolutionInstanceName = requiredEnv('EVOLUTION_INSTANCE_NAME');
-    const notifyTo = requiredEnv('WHATSAPP_NOTIFY_TO');
+    const configuredNotifyTo = Deno.env.get('WHATSAPP_NOTIFY_TO') || '';
 
     const body = await req.json();
     const lead = body.lead as EstimateLead;
-    const sendTo = body.to || notifyTo;
+    const connectedOwnerNumber = await connectedInstanceOwnerNumber(
+      evolutionApiUrl,
+      evolutionApiKey,
+      evolutionInstanceName,
+    );
+    const sendTo = String(body.to || connectedOwnerNumber || configuredNotifyTo).replace(/\D/g, '');
     const text = body.message || buildMessage(lead);
+
+    if (!sendTo) {
+      throw new Error('No WhatsApp recipient available.');
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
@@ -116,7 +148,7 @@ Deno.serve(async (req) => {
       throw new Error(`Evolution API failed with ${response.status}: ${detail}`);
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
+    return new Response(JSON.stringify({ ok: true, to: sendTo, target: body.to ? 'custom' : connectedOwnerNumber ? 'connected_instance_owner' : 'configured_notify_to' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
