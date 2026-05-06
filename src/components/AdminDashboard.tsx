@@ -7,7 +7,9 @@ import {
   BarChart2,
   Calendar,
   CheckCircle,
+  ChevronLeft,
   Clock,
+  Eye,
   FileText,
   Globe,
   LogOut,
@@ -19,6 +21,7 @@ import {
   Plus,
   QrCode,
   RefreshCw,
+  Save,
   Search,
   Send,
   Smartphone,
@@ -32,7 +35,7 @@ import {
 import { supabase } from '../lib/supabase';
 
 type LeadStatus = 'new' | 'contacted' | 'quoted' | 'won' | 'lost';
-type InterestLevel = 'hot' | 'warm' | 'cold';
+type InterestLevel = '1' | '2' | '3';
 type InterestFilter = 'all' | InterestLevel | 'none';
 type ActiveTab = 'clientes' | 'formularios' | 'analytics';
 
@@ -95,13 +98,15 @@ const statusConfig: Record<LeadStatus, { label: string; bg: string; text: string
   lost:      { label: 'Perdido',    bg: 'bg-gray-100',  text: 'text-gray-500',   border: 'border-gray-200',   dot: 'bg-gray-400' },
 };
 
-const interestConfig: Record<InterestLevel, { label: string; emoji: string; activeBg: string; activeText: string; activeBorder: string }> = {
-  hot:  { label: 'Quente', emoji: '🔥', activeBg: 'bg-red-100',   activeText: 'text-red-700',   activeBorder: 'border-red-300' },
-  warm: { label: 'Morno',  emoji: '⚡', activeBg: 'bg-amber-100', activeText: 'text-amber-700', activeBorder: 'border-amber-300' },
-  cold: { label: 'Frio',   emoji: '❄️', activeBg: 'bg-blue-100',  activeText: 'text-blue-700',  activeBorder: 'border-blue-300' },
+const interestConfig: Record<InterestLevel, { label: string; emoji: string; activeBg: string; activeText: string; activeBorder: string; cardTint: string; cardRing: string; avatarBg: string; avatarText: string }> = {
+  '1': { label: 'Nivel 1', emoji: '1', activeBg: 'bg-blue-100', activeText: 'text-blue-700', activeBorder: 'border-blue-300', cardTint: 'bg-blue-50/50 border-blue-200', cardRing: 'ring-blue-200', avatarBg: 'bg-blue-100', avatarText: 'text-blue-700' },
+  '2': { label: 'Nivel 2', emoji: '2', activeBg: 'bg-amber-100', activeText: 'text-amber-700', activeBorder: 'border-amber-300', cardTint: 'bg-amber-50/50 border-amber-200', cardRing: 'ring-amber-200', avatarBg: 'bg-amber-100', avatarText: 'text-amber-700' },
+  '3': { label: 'Nivel 3', emoji: '3', activeBg: 'bg-red-100', activeText: 'text-red-700', activeBorder: 'border-red-300', cardTint: 'bg-red-50/55 border-red-200', cardRing: 'ring-red-200', avatarBg: 'bg-red-100', avatarText: 'text-red-700' },
 };
 
 const inputClass = 'w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#171717] outline-none transition focus:border-[#B91C1C] focus:ring-2 focus:ring-[#B91C1C]/10';
+const adminLoginEmail = 'admin@stjosephgranite.local';
+const adminLoginUsername = 'admingranite';
 
 function initials(name: string) {
   return name.split(' ').slice(0, 2).map((n) => n[0]).join('').toUpperCase();
@@ -137,10 +142,18 @@ function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeInterestLevel(value?: string | null): InterestLevel | null {
+  if (value === '1' || value === '2' || value === '3') return value;
+  if (value === 'cold') return '1';
+  if (value === 'warm') return '2';
+  if (value === 'hot') return '3';
+  return null;
+}
+
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function AdminLogin() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -149,6 +162,8 @@ function AdminLogin() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    const normalizedLogin = username.trim().toLowerCase();
+    const email = normalizedLogin === adminLoginUsername ? adminLoginEmail : username.trim();
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (err) setError('E-mail ou senha inválidos.');
@@ -168,7 +183,7 @@ function AdminLogin() {
           <div className="space-y-3">
             <div className="relative">
               <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input required type="email" placeholder="E-mail" className={`${inputClass} pl-9`} value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input required type="text" placeholder="Usuario" className={`${inputClass} pl-9`} value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <input required type="password" placeholder="Senha" className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
@@ -254,6 +269,136 @@ function CompletionModal({ lead, onConfirm, onCancel, loading }: { lead: Lead; o
   );
 }
 
+// ─── Template system ─────────────────────────────────────────────────────────
+
+type MessageTemplate = {
+  id: string;
+  name: string;
+  message: string;
+  subject: string;
+  isCustom?: boolean;
+};
+
+const TEMPLATES_KEY = 'st_joseph_msg_templates';
+
+const BUILTIN_TEMPLATES: MessageTemplate[] = [
+  {
+    id: 'followup',
+    name: '📞 Follow-up',
+    message: 'Hi {nome}! This is St. Joseph Granite.\n\nWe wanted to follow up on your {projeto} project with {pedra}. Are you still interested? We\'d love to help!\n\n📞 (774) 433-2580',
+    subject: 'Following up on your {projeto} project — St. Joseph Granite',
+  },
+  {
+    id: 'quote',
+    name: '📋 Orçamento Pronto',
+    message: 'Hi {nome}! Your quote for the {projeto} project with {pedra} is ready.\n\nContact us to review the details and move forward.\n\n📞 (774) 433-2580',
+    subject: 'Your {projeto} quote is ready — St. Joseph Granite',
+  },
+  {
+    id: 'promo',
+    name: '🎉 Promoção',
+    message: 'Hi {nome}! 🎉 Special offer this week at St. Joseph Granite.\n\nContact us about your {projeto} project with {pedra} and ask about our current deals!\n\n📞 (774) 433-2580',
+    subject: 'Special offer — St. Joseph Granite',
+  },
+  {
+    id: 'reminder',
+    name: '🔔 Lembrete',
+    message: 'Hi {nome}, a quick reminder from St. Joseph Granite.\n\nYour {projeto} project with {pedra} is waiting — whenever you\'re ready, just give us a call!\n\n📞 (774) 433-2580',
+    subject: 'Reminder about your {projeto} project',
+  },
+];
+
+function loadCustomTemplates(): MessageTemplate[] {
+  try { return JSON.parse(localStorage.getItem(TEMPLATES_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function persistCustomTemplates(templates: MessageTemplate[]) {
+  localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
+}
+
+function applyVars(text: string, lead: Pick<Lead, 'name' | 'project_type' | 'stone_type'>) {
+  return text
+    .replace(/{nome}/g, lead.name)
+    .replace(/{projeto}/g, lead.project_type)
+    .replace(/{pedra}/g, lead.stone_type);
+}
+
+// ─── WhatsApp Preview ────────────────────────────────────────────────────────
+
+function WhatsAppPreview({ message, lead }: { message: string; lead: Pick<Lead, 'name' | 'project_type' | 'stone_type'> }) {
+  const rendered = applyVars(message, lead);
+  const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  return (
+    <div className="h-full flex flex-col bg-[#ECE5DD] rounded-xl overflow-hidden border border-gray-200 min-h-0">
+      <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3 shrink-0">
+        <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">SJ</div>
+        <div>
+          <p className="text-white text-sm font-semibold">St. Joseph Granite</p>
+          <p className="text-white/70 text-xs">Business Account</p>
+        </div>
+      </div>
+      <div className="flex-1 p-4 overflow-auto">
+        <div className="flex justify-start">
+          <div className="max-w-[90%] bg-white rounded-2xl rounded-tl-sm px-3 py-2 shadow-sm">
+            <p className="text-sm text-gray-800 whitespace-pre-wrap break-words leading-relaxed">{rendered}</p>
+            <p className="text-right text-[10px] text-gray-400 mt-1">{time} ✓✓</p>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[#F0F0F0] px-3 py-2 flex items-center gap-2 shrink-0">
+        <div className="flex-1 bg-white rounded-full px-4 py-2 text-xs text-gray-400">Type a message</div>
+        <div className="h-8 w-8 rounded-full bg-[#25D366] flex items-center justify-center">
+          <Send size={13} className="text-white ml-0.5" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Email Preview ───────────────────────────────────────────────────────────
+
+function EmailPreview({ message, subject, lead }: { message: string; subject: string; lead: Pick<Lead, 'name' | 'email' | 'project_type' | 'stone_type'> }) {
+  const renderedMsg = applyVars(message, lead);
+  const renderedSubj = applyVars(subject, lead);
+  return (
+    <div className="h-full flex flex-col bg-white rounded-xl overflow-hidden border border-gray-200 min-h-0">
+      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 space-y-1 shrink-0">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-400 w-14 shrink-0">De:</span>
+          <span className="text-gray-700 font-medium truncate">St. Joseph Granite &lt;info@stjosephgranite.com&gt;</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-400 w-14 shrink-0">Para:</span>
+          <span className="text-gray-700 truncate">{lead.name} &lt;{lead.email}&gt;</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-400 w-14 shrink-0">Assunto:</span>
+          <span className="text-gray-800 font-semibold truncate">{renderedSubj || '(sem assunto)'}</span>
+        </div>
+      </div>
+      <div className="flex-1 p-4 overflow-auto">
+        <div className="max-w-md mx-auto">
+          <div className="text-center mb-4 pb-4 border-b border-gray-100">
+            <p className="text-[#B91C1C] font-serif text-lg font-bold">St. Joseph Granite</p>
+          </div>
+          <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{renderedMsg}</p>
+          <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 text-center">
+            <p>St. Joseph Granite | (774) 433-2580</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── BulkMessageModal (wizard) ───────────────────────────────────────────────
+
+const MOCK_LEAD = {
+  name: 'João Silva', email: 'joao@exemplo.com',
+  project_type: 'Kitchen Countertop', stone_type: 'Granite',
+} as Lead;
+
 function BulkMessageModal({
   selectedLeads, onClose, onSendWhatsApp, onSendEmail, loading,
   message, setMessage, subject, setSubject,
@@ -268,91 +413,218 @@ function BulkMessageModal({
   subject: string;
   setSubject: (v: string) => void;
 }) {
+  const [step, setStep] = useState<'templates' | 'compose'>('templates');
   const [channel, setChannel] = useState<'whatsapp' | 'email'>('whatsapp');
+  const [customTemplates, setCustomTemplates] = useState<MessageTemplate[]>(loadCustomTemplates);
+  const [saveName, setSaveName] = useState('');
+  const [showSaveInput, setShowSaveInput] = useState(false);
+
+  const previewLead = selectedLeads[0] ?? MOCK_LEAD;
+  const allTemplates = [...BUILTIN_TEMPLATES, ...customTemplates];
+
+  function pickTemplate(tpl: MessageTemplate) {
+    setMessage(tpl.message);
+    setSubject(tpl.subject);
+    setStep('compose');
+  }
+
+  function saveCurrentTemplate() {
+    if (!saveName.trim()) return;
+    const newTpl: MessageTemplate = {
+      id: crypto.randomUUID(),
+      name: saveName.trim(),
+      message,
+      subject,
+      isCustom: true,
+    };
+    const updated = [...customTemplates, newTpl];
+    setCustomTemplates(updated);
+    persistCustomTemplates(updated);
+    setSaveName('');
+    setShowSaveInput(false);
+  }
+
+  function deleteCustomTemplate(id: string) {
+    const updated = customTemplates.filter((t) => t.id !== id);
+    setCustomTemplates(updated);
+    persistCustomTemplates(updated);
+  }
+
+  const ChannelToggle = ({ compact }: { compact?: boolean }) => (
+    <div className={`flex gap-2 p-1 bg-gray-100 rounded-xl ${compact ? 'mb-4' : 'mb-5'}`}>
+      <button
+        onClick={() => setChannel('whatsapp')}
+        className={`flex-1 flex items-center justify-center gap-2 rounded-lg ${compact ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition ${channel === 'whatsapp' ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
+      >
+        <MessageCircle size={compact ? 13 : 15} /> WhatsApp
+      </button>
+      <button
+        onClick={() => setChannel('email')}
+        className={`flex-1 flex items-center justify-center gap-2 rounded-lg ${compact ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-semibold transition ${channel === 'email' ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}
+      >
+        <Mail size={compact ? 13 : 15} /> E-mail
+      </button>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden">
+      <div className={`w-full ${step === 'compose' ? 'max-w-4xl' : 'max-w-lg'} rounded-2xl bg-white shadow-2xl overflow-hidden transition-all duration-200`}>
+
+        {/* Header */}
         <div className="bg-gradient-to-r from-[#7F1D1D] to-[#B91C1C] px-6 py-4 flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-white">Enviar mensagem em massa</h3>
-            <p className="text-xs text-white/70 mt-0.5">{selectedLeads.length} cliente{selectedLeads.length !== 1 ? 's' : ''} selecionado{selectedLeads.length !== 1 ? 's' : ''}</p>
+          <div className="flex items-center gap-2">
+            {step === 'compose' && (
+              <button onClick={() => setStep('templates')} disabled={loading} className="text-white/70 hover:text-white transition mr-1">
+                <ChevronLeft size={18} />
+              </button>
+            )}
+            <div>
+              <h3 className="font-semibold text-white">
+                {step === 'templates' ? 'Escolher Template' : 'Editar & Prévia'}
+              </h3>
+              <p className="text-xs text-white/70 mt-0.5">{selectedLeads.length} cliente{selectedLeads.length !== 1 ? 's' : ''} selecionado{selectedLeads.length !== 1 ? 's' : ''}</p>
+            </div>
           </div>
           <button onClick={onClose} disabled={loading} className="text-white/70 hover:text-white"><X size={18} /></button>
         </div>
 
-        <div className="p-6">
-          {/* Channel toggle */}
-          <div className="flex gap-2 mb-5 p-1 bg-gray-100 rounded-xl">
-            <button
-              onClick={() => setChannel('whatsapp')}
-              className={`flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${channel === 'whatsapp' ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              <MessageCircle size={15} /> WhatsApp via Evolution
-            </button>
-            <button
-              onClick={() => setChannel('email')}
-              className={`flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${channel === 'email' ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              <Mail size={15} /> E-mail
-            </button>
-          </div>
+        {/* Step 1: Template picker */}
+        {step === 'templates' && (
+          <div className="p-6">
+            <ChannelToggle />
 
-          {/* Recipients preview */}
-          <div className="mb-4 rounded-xl border border-gray-100 bg-gray-50 p-3">
-            <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-2">Destinatários</p>
-            <div className="flex flex-wrap gap-1.5">
-              {selectedLeads.slice(0, 6).map((l) => (
-                <span key={l.id} className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700">
-                  <span className="h-4 w-4 rounded-full bg-[#B91C1C]/10 text-[#B91C1C] text-[9px] font-bold flex items-center justify-center">{initials(l.name)}</span>
-                  {l.name.split(' ')[0]}
-                </span>
+            <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-3">Templates</p>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {/* Blank */}
+              <button
+                onClick={() => { setMessage(defaultBulkMessage); setSubject('Message from St. Joseph Granite'); setStep('compose'); }}
+                className="rounded-xl border-2 border-dashed border-gray-200 p-3 text-left hover:border-[#B91C1C]/40 hover:bg-red-50/30 transition group"
+              >
+                <p className="text-sm font-semibold text-gray-500 group-hover:text-[#B91C1C]">✏️ Mensagem livre</p>
+                <p className="text-xs text-gray-400 mt-0.5">Começar do zero</p>
+              </button>
+
+              {allTemplates.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  onClick={() => pickTemplate(tpl)}
+                  className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-left hover:border-[#B91C1C]/40 hover:bg-red-50/30 transition group relative"
+                >
+                  <p className="text-sm font-semibold text-gray-700 group-hover:text-[#B91C1C] pr-5">{tpl.name}</p>
+                  <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{tpl.message.slice(0, 70)}...</p>
+                  {tpl.isCustom && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); deleteCustomTemplate(tpl.id); }}
+                      className="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </button>
               ))}
-              {selectedLeads.length > 6 && (
-                <span className="rounded-full bg-gray-200 px-2.5 py-1 text-xs text-gray-600">+{selectedLeads.length - 6}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Compose + Preview */}
+        {step === 'compose' && (
+          <div className="flex" style={{ height: '540px' }}>
+
+            {/* Left: Editor */}
+            <div className="w-1/2 p-5 border-r border-gray-100 flex flex-col overflow-auto">
+              <ChannelToggle compact />
+
+              {/* Recipients */}
+              <div className="mb-3 rounded-xl border border-gray-100 bg-gray-50 p-2.5 shrink-0">
+                <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-1.5">Destinatários</p>
+                <div className="flex flex-wrap gap-1">
+                  {selectedLeads.slice(0, 5).map((l) => (
+                    <span key={l.id} className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2 py-0.5 text-xs text-gray-700">
+                      <span className="h-3.5 w-3.5 rounded-full bg-[#B91C1C]/10 text-[#B91C1C] text-[8px] font-bold flex items-center justify-center">{initials(l.name)}</span>
+                      {l.name.split(' ')[0]}
+                    </span>
+                  ))}
+                  {selectedLeads.length > 5 && <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">+{selectedLeads.length - 5}</span>}
+                </div>
+              </div>
+
+              {/* Subject (email only) */}
+              {channel === 'email' && (
+                <div className="mb-3 shrink-0">
+                  <label className="text-xs text-gray-500 font-medium uppercase tracking-widest mb-1 block">Assunto</label>
+                  <input value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass} placeholder="Assunto do e-mail" />
+                </div>
               )}
+
+              {/* Message textarea */}
+              <div className="flex-1 flex flex-col min-h-0 mb-2">
+                <label className="text-xs text-gray-500 font-medium uppercase tracking-widest mb-1 block shrink-0">Mensagem</label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className={`${inputClass} resize-none flex-1 min-h-0`}
+                  placeholder="Olá {nome}..."
+                />
+              </div>
+              <p className="text-xs text-gray-400 mb-3 shrink-0">Vars: <code className="bg-gray-100 px-1 rounded">{'{nome}'}</code> <code className="bg-gray-100 px-1 rounded">{'{projeto}'}</code> <code className="bg-gray-100 px-1 rounded">{'{pedra}'}</code></p>
+
+              {/* Save template */}
+              <div className="mb-3 shrink-0">
+                {!showSaveInput ? (
+                  <button onClick={() => setShowSaveInput(true)} className="text-xs text-gray-400 hover:text-[#B91C1C] flex items-center gap-1 transition">
+                    <Save size={11} /> Salvar como template
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      autoFocus
+                      value={saveName}
+                      onChange={(e) => setSaveName(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') saveCurrentTemplate(); if (e.key === 'Escape') setShowSaveInput(false); }}
+                      placeholder="Nome do template..."
+                      className={`${inputClass} text-xs py-1.5`}
+                    />
+                    <button onClick={saveCurrentTemplate} disabled={!saveName.trim()} className="rounded-xl bg-[#B91C1C] px-3 text-white hover:bg-[#7F1D1D] disabled:opacity-50 transition">
+                      <Save size={12} />
+                    </button>
+                    <button onClick={() => setShowSaveInput(false)} className="rounded-xl border border-gray-200 px-2 text-gray-500 hover:bg-gray-50 transition">
+                      <X size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Send */}
+              <button
+                onClick={channel === 'whatsapp' ? onSendWhatsApp : onSendEmail}
+                disabled={loading || !message.trim()}
+                className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 flex items-center justify-center gap-2 shrink-0 ${channel === 'whatsapp' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+              >
+                {loading
+                  ? <><RefreshCw size={14} className="animate-spin" /> Enviando...</>
+                  : <><Send size={14} /> Enviar para {selectedLeads.length} cliente{selectedLeads.length !== 1 ? 's' : ''}</>}
+              </button>
             </div>
-          </div>
 
-          {/* Subject (email only) */}
-          {channel === 'email' && (
-            <div className="mb-3">
-              <label className="text-xs text-gray-500 font-medium uppercase tracking-widest mb-1.5 block">Assunto</label>
-              <input
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className={inputClass}
-                placeholder="Assunto do e-mail"
-              />
+            {/* Right: Preview */}
+            <div className="w-1/2 p-5 flex flex-col min-h-0">
+              <div className="flex items-center gap-2 mb-3 shrink-0">
+                <Eye size={13} className="text-gray-400" />
+                <p className="text-xs text-gray-400 uppercase tracking-widest font-medium">
+                  Prévia — {previewLead.name.split(' ')[0]}
+                </p>
+              </div>
+              <div className="flex-1 min-h-0">
+                {channel === 'whatsapp'
+                  ? <WhatsAppPreview message={message} lead={previewLead} />
+                  : <EmailPreview message={message} subject={subject} lead={previewLead} />}
+              </div>
             </div>
-          )}
 
-          {/* Message */}
-          <div className="mb-2">
-            <label className="text-xs text-gray-500 font-medium uppercase tracking-widest mb-1.5 block">Mensagem</label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={5}
-              className={`${inputClass} resize-none`}
-              placeholder="Olá {nome}, temos uma novidade para você..."
-            />
           </div>
-          <p className="text-xs text-gray-400 mb-5">Variáveis: <code className="bg-gray-100 px-1 rounded">{'{nome}'}</code> <code className="bg-gray-100 px-1 rounded">{'{projeto}'}</code> <code className="bg-gray-100 px-1 rounded">{'{pedra}'}</code></p>
+        )}
 
-          <div className="flex gap-3">
-            <button onClick={onClose} disabled={loading} className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition disabled:opacity-50">
-              Cancelar
-            </button>
-            <button
-              onClick={channel === 'whatsapp' ? onSendWhatsApp : onSendEmail}
-              disabled={loading || !message.trim()}
-              className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 flex items-center justify-center gap-2 ${channel === 'whatsapp' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'}`}
-            >
-              {loading ? <><RefreshCw size={14} className="animate-spin" /> Enviando...</> : <><Send size={14} /> Enviar para {selectedLeads.length} cliente{selectedLeads.length !== 1 ? 's' : ''}</>}
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -375,13 +647,34 @@ function LeadCard({
   const leadStatus = (lead.status || (lead.contacted ? 'contacted' : 'new')) as LeadStatus;
   const isWon = leadStatus === 'won';
 
+  const interestStyle = lead.interest_level ? interestConfig[lead.interest_level] : null;
+
   return (
-    <div className={`rounded-2xl bg-white border shadow-sm flex flex-col transition-all ${selected ? 'border-[#B91C1C] ring-2 ring-[#B91C1C]/20' : 'border-gray-100 hover:border-gray-200'}`}>
+    <div className={`rounded-2xl border shadow-sm flex flex-col transition-all overflow-hidden ${
+      isWon
+        ? 'bg-emerald-50/75 border-emerald-200 ring-2 ring-emerald-200'
+        : selected
+          ? 'bg-white border-[#B91C1C] ring-2 ring-[#B91C1C]/20'
+          : interestStyle
+            ? `${interestStyle.cardTint} ${interestStyle.cardRing}`
+            : 'bg-white border-gray-100 hover:border-gray-200'
+    }`}>
+      {isWon && (
+        <div className="bg-emerald-600 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-white">
+          Projeto Concluido
+        </div>
+      )}
       {/* Card header */}
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-3">
-            <div className={`h-11 w-11 shrink-0 rounded-2xl grid place-items-center text-sm font-bold ${isWon ? 'bg-emerald-100 text-emerald-700' : lead.interest_level === 'hot' ? 'bg-red-100 text-red-700' : 'bg-[#B91C1C]/10 text-[#B91C1C]'}`}>
+            <div className={`h-11 w-11 shrink-0 rounded-2xl grid place-items-center text-sm font-bold ${
+              isWon
+                ? 'bg-emerald-100 text-emerald-700'
+                : interestStyle
+                  ? `${interestStyle.avatarBg} ${interestStyle.avatarText}`
+                  : 'bg-[#B91C1C]/10 text-[#B91C1C]'
+            }`}>
               {initials(lead.name)}
             </div>
             <div className="min-w-0">
@@ -767,7 +1060,10 @@ export default function AdminDashboard() {
     const { data, error } = await supabase.from('estimate_requests').select('*').order('created_at', { ascending: false });
     setLoading(false);
     if (error) { addToast('Não foi possível carregar os clientes.', 'error'); return; }
-    setLeads((data || []) as Lead[]);
+    setLeads(((data || []) as Lead[]).map((lead) => ({
+      ...lead,
+      interest_level: normalizeInterestLevel(lead.interest_level),
+    })));
   };
 
   const fetchAnalytics = async () => {
@@ -844,8 +1140,8 @@ export default function AdminDashboard() {
     const { error } = await supabase.from('estimate_requests').update(updates).eq('id', id);
     setSaving(false);
     if (error) { addToast('Não foi possível atualizar o cliente.', 'error'); return; }
-    setLeads((items) => items.map((l) => (l.id === id ? { ...l, ...updates } : l)));
-    setSelectedLead((l) => (l?.id === id ? { ...l, ...updates } : l));
+    setLeads((items) => items.map((l) => (l.id === id ? { ...l, ...updates, interest_level: normalizeInterestLevel(String(updates.interest_level ?? l.interest_level ?? '')) } : l)));
+    setSelectedLead((l) => (l?.id === id ? { ...l, ...updates, interest_level: normalizeInterestLevel(String(updates.interest_level ?? l.interest_level ?? '')) } : l));
   };
 
   const deleteLead = async (lead: Lead) => {
@@ -864,7 +1160,7 @@ export default function AdminDashboard() {
       .insert({ ...newLead, contacted: false, status: 'new', photo_names: [] }).select().single();
     setSaving(false);
     if (error) { addToast('Não foi possível adicionar o cliente.', 'error'); return; }
-    setLeads((items) => [data as Lead, ...items]);
+    setLeads((items) => [{ ...(data as Lead), interest_level: normalizeInterestLevel((data as Lead).interest_level) }, ...items]);
     setNewLead(emptyLead);
     setShowNewLead(false);
     addToast('Cliente adicionado com sucesso.', 'success');
@@ -889,13 +1185,10 @@ export default function AdminDashboard() {
     else addToast('Status atualizado, mas notificações falharam.', 'error');
   };
 
-  const applyMessageVars = (msg: string, lead: Lead) =>
-    msg.replace(/{nome}/g, lead.name).replace(/{projeto}/g, lead.project_type).replace(/{pedra}/g, lead.stone_type);
-
   const sendBulkWhatsApp = async () => {
     const targets = selectedLeads.filter((lead) => normalizeWhatsAppNumber(lead.phone));
     if (!targets.length) {
-      addToast('Nenhum cliente selecionado tem telefone vÃ¡lido para WhatsApp.', 'warning');
+      addToast('Nenhum cliente selecionado tem telefone válido para WhatsApp.', 'warning');
       return;
     }
 
@@ -904,7 +1197,7 @@ export default function AdminDashboard() {
     const okIds: string[] = [];
 
     for (const lead of targets) {
-      const msg = applyMessageVars(bulkMessage, lead);
+      const msg = applyVars(bulkMessage, lead);
       const clientPhone = normalizeWhatsAppNumber(lead.phone);
       const { error } = await supabase.functions.invoke('send-whatsapp-notification', { body: { lead, to: clientPhone, message: msg } });
       if (error) {
@@ -937,7 +1230,7 @@ export default function AdminDashboard() {
     setBulkSending(true);
     let ok = 0, fail = 0;
     for (const lead of targets) {
-      const msg = applyMessageVars(bulkMessage, lead);
+      const msg = applyVars(bulkMessage, lead);
       const { error } = await supabase.functions.invoke('send-email-notification', {
         body: { lead, type: 'custom', subject: bulkSubject, message: msg },
       });
@@ -966,9 +1259,9 @@ export default function AdminDashboard() {
 
   const interestFilterOptions: { value: InterestFilter; label: string; emoji?: string }[] = [
     { value: 'all', label: 'Todos' },
-    { value: 'hot', label: 'Quente', emoji: '🔥' },
-    { value: 'warm', label: 'Morno', emoji: '⚡' },
-    { value: 'cold', label: 'Frio', emoji: '❄️' },
+    { value: '1', label: 'Nivel 1', emoji: '1' },
+    { value: '2', label: 'Nivel 2', emoji: '2' },
+    { value: '3', label: 'Nivel 3', emoji: '3' },
     { value: 'none', label: 'Sem classificação' },
   ];
 
@@ -1208,7 +1501,13 @@ export default function AdminDashboard() {
                   {selectedLead ? (
                     <div className="p-5 space-y-4">
                       <div className="flex items-center gap-4">
-                        <div className={`h-14 w-14 shrink-0 rounded-2xl grid place-items-center text-lg font-bold ${selectedLead.status === 'won' ? 'bg-emerald-100 text-emerald-700' : 'bg-[#B91C1C]/10 text-[#B91C1C]'}`}>{initials(selectedLead.name)}</div>
+                        <div className={`h-14 w-14 shrink-0 rounded-2xl grid place-items-center text-lg font-bold ${
+                          selectedLead.status === 'won'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : selectedLead.interest_level
+                              ? `${interestConfig[selectedLead.interest_level].avatarBg} ${interestConfig[selectedLead.interest_level].avatarText}`
+                              : 'bg-[#B91C1C]/10 text-[#B91C1C]'
+                        }`}>{initials(selectedLead.name)}</div>
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-[#171717] text-base truncate">{selectedLead.name}</p>
                           <div className="flex flex-wrap gap-1.5 mt-1">
@@ -1384,3 +1683,5 @@ export default function AdminDashboard() {
     </>
   );
 }
+
+
