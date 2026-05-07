@@ -2,28 +2,29 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
+import { useI18n } from '../i18n/I18nContext';
 
-const reviews = [
+const reviewData = [
   {
     name: 'Josh L.',
     location: 'Reviewed 5/2/2026',
     text: 'These guys are my go-to for granite, always high quality, and incredible attention to detail to make sure things are done properly.',
     rating: 5,
-    project: 'Granite Work',
+    projectKey: 'reviews.r1_project',
   },
   {
     name: 'Pedro C.',
     location: 'Reviewed 5/1/2026',
     text: 'Good job my house.',
     rating: 5,
-    project: 'Home Project',
+    projectKey: 'reviews.r2_project',
   },
   {
     name: 'Amy Scanlon',
     location: 'Customer review',
     text: 'At-home estimate within days of inquiry and installation within a week. They were friendly, professional, and the job came out beautiful.',
     rating: 5,
-    project: 'Countertop Installation',
+    projectKey: 'reviews.r3_project',
   },
 ];
 
@@ -38,6 +39,7 @@ function StarRating({ count }: { count: number }) {
 }
 
 export default function Reviews() {
+  const { t } = useI18n();
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [ref, inView] = useInView(0.15);
@@ -46,14 +48,20 @@ export default function Reviews() {
     setDirection(idx > current ? 1 : -1);
     setCurrent(idx);
   };
-  const prev = () => goTo((current - 1 + reviews.length) % reviews.length);
-  const next = () => goTo((current + 1) % reviews.length);
+  const prev = () => goTo((current - 1 + reviewData.length) % reviewData.length);
+  const next = () => goTo((current + 1) % reviewData.length);
 
   const variants = {
     enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
   };
+
+  const stats = [
+    { value: '20+', labelKey: 'reviews.stat_years' },
+    { value: '56',  labelKey: 'reviews.stat_reviews' },
+    { value: '7',   labelKey: 'reviews.stat_payments' },
+  ];
 
   return (
     <section id="reviews" className="py-24 bg-[#B91C1C] relative overflow-hidden">
@@ -68,10 +76,10 @@ export default function Reviews() {
             transition={{ duration: 0.6 }}
           >
             <p className="text-white/85 text-xs tracking-[0.3em] font-sans uppercase mb-4">
-              56 Ratings &amp; Reviews
+              {t('reviews.label')}
             </p>
             <h2 className="font-serif text-3xl lg:text-4xl text-white font-medium">
-              Here's What Our Satisfied Customers Are Saying
+              {t('reviews.heading')}
             </h2>
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-white/50" />
@@ -95,17 +103,17 @@ export default function Reviews() {
             >
               <Quote size={32} className="text-[#B91C1C]/35 mb-6" />
               <p className="font-serif text-xl lg:text-2xl text-[#171717] leading-relaxed mb-8 italic">
-                "{reviews[current].text}"
+                "{reviewData[current].text}"
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <StarRating count={reviews[current].rating} />
-                  <p className="text-[#171717] font-sans font-semibold mt-2">{reviews[current].name}</p>
-                  <p className="text-[#5F5F5F] text-sm font-sans">{reviews[current].location}</p>
+                  <StarRating count={reviewData[current].rating} />
+                  <p className="text-[#171717] font-sans font-semibold mt-2">{reviewData[current].name}</p>
+                  <p className="text-[#5F5F5F] text-sm font-sans">{reviewData[current].location}</p>
                 </div>
                 <div className="sm:text-right">
                   <span className="inline-block border border-[#B91C1C]/30 text-[#B91C1C] text-xs tracking-wider font-sans px-4 py-2 rounded-full">
-                    {reviews[current].project}
+                    {t(reviewData[current].projectKey)}
                   </span>
                 </div>
               </div>
@@ -122,7 +130,7 @@ export default function Reviews() {
             <ChevronLeft size={16} />
           </button>
           <div className="flex gap-2">
-            {reviews.map((_, i) => (
+            {reviewData.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
@@ -148,14 +156,10 @@ export default function Reviews() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="grid grid-cols-3 gap-6 mt-14 pt-10 border-t border-white/10"
         >
-          {[
-            { value: '20+', label: 'Years of Experience' },
-            { value: '56', label: 'Ratings & Reviews' },
-            { value: '7', label: 'Payment Types' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
+          {stats.map((stat) => (
+            <div key={stat.labelKey} className="text-center">
               <p className="font-serif text-3xl lg:text-4xl text-white font-medium">{stat.value}</p>
-              <p className="text-white/75 text-xs font-sans tracking-wide mt-1 uppercase">{stat.label}</p>
+              <p className="text-white/75 text-xs font-sans tracking-wide mt-1 uppercase">{t(stat.labelKey)}</p>
             </div>
           ))}
         </motion.div>

@@ -117,13 +117,17 @@ function formatDate(value?: string | null) {
   return new Intl.DateTimeFormat('pt-BR', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(value));
 }
 
+const GOOGLE_REVIEW_URL = 'https://search.google.com/local/writereview?placeid=ChIJhXNxUndu5IkR_FceUespc40';
+
 function buildCompletionMessage(lead: Lead) {
   return [
     `Hi ${lead.name}! 🎉`,
     '',
     `Your ${lead.project_type} project with St. Joseph Granite is now complete!`,
     '',
-    'We truly appreciate your trust. If you love the result, a quick review would mean a lot to us.',
+    'We truly appreciate your trust. If you love the result, a quick Google review would mean the world to us:',
+    '',
+    `⭐ ${GOOGLE_REVIEW_URL}`,
     '',
     '📞 (774) 433-2580',
     '',

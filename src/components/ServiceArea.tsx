@@ -1,15 +1,17 @@
 import { motion } from 'framer-motion';
 import { MapPin, Clock, Phone, Star } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
-
-const hours = [
-  { day: 'Mon - Fri', time: '9:00 am - 5:00 pm' },
-  { day: 'Sat', time: '9:00 am - 2:00 pm' },
-  { day: 'Sun', time: 'Closed' },
-];
+import { useI18n } from '../i18n/I18nContext';
 
 export default function ServiceArea() {
+  const { t } = useI18n();
   const [ref, inView] = useInView(0.1);
+
+  const hours = [
+    { dayKey: 'service.mon_fri', timeKey: 'service.time_weekday' },
+    { dayKey: 'service.sat',     timeKey: 'service.time_sat' },
+    { dayKey: 'service.sun',     timeKey: 'service.closed' },
+  ];
 
   return (
     <section id="contact" className="py-24 bg-white relative overflow-hidden">
@@ -30,10 +32,10 @@ export default function ServiceArea() {
             transition={{ duration: 0.6 }}
           >
             <p className="text-[#B91C1C] text-xs tracking-[0.3em] font-sans uppercase mb-4">
-              Visit Us
+              {t('service.label')}
             </p>
             <h2 className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium">
-              One Showroom Location in Bellingham
+              {t('service.heading')}
             </h2>
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-[#B91C1C]" />
@@ -64,7 +66,7 @@ export default function ServiceArea() {
                   rel="noreferrer"
                   className="inline-flex text-[#B91C1C] hover:text-[#7F1D1D] text-sm font-sans font-semibold mt-3"
                 >
-                  Get Directions
+                  {t('service.directions')}
                 </a>
               </div>
             </div>
@@ -74,12 +76,12 @@ export default function ServiceArea() {
                 <Phone size={18} className="text-[#B91C1C]" />
               </div>
               <div>
-                <h3 className="font-serif text-xl text-[#171717] font-medium">Contact Us</h3>
+                <h3 className="font-serif text-xl text-[#171717] font-medium">{t('service.contact_title')}</h3>
                 <a
                   href="tel:+17744332580"
                   className="text-[#B91C1C] hover:text-[#7F1D1D] text-sm font-sans font-semibold mt-1 inline-flex"
                 >
-                  Main: (774) 433-2580
+                  {t('service.contact_phone')}
                 </a>
               </div>
             </div>
@@ -89,8 +91,8 @@ export default function ServiceArea() {
                 <Star size={18} className="text-[#B91C1C]" />
               </div>
               <div>
-                <h3 className="font-serif text-xl text-[#171717] font-medium">Customer Feedback</h3>
-                <p className="text-[#5F5F5F] text-sm font-sans mt-1">56 ratings and reviews</p>
+                <h3 className="font-serif text-xl text-[#171717] font-medium">{t('service.feedback_title')}</h3>
+                <p className="text-[#5F5F5F] text-sm font-sans mt-1">{t('service.feedback_count')}</p>
               </div>
             </div>
           </motion.div>
@@ -106,22 +108,22 @@ export default function ServiceArea() {
                 <Clock size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-white/75 text-xs tracking-[0.25em] font-sans uppercase">Hours</p>
-                <h3 className="font-serif text-2xl font-medium">Open - Closes 5:00 pm</h3>
+                <p className="text-white/75 text-xs tracking-[0.25em] font-sans uppercase">{t('service.hours_label')}</p>
+                <h3 className="font-serif text-2xl font-medium">{t('service.hours_status')}</h3>
               </div>
             </div>
 
             <ul className="divide-y divide-white/15">
-              {hours.map(({ day, time }) => (
-                <li key={day} className="flex items-center justify-between gap-4 py-4">
-                  <span className="font-sans text-sm text-white/75">{day}</span>
-                  <span className="font-sans text-sm font-semibold text-white">{time}</span>
+              {hours.map(({ dayKey, timeKey }) => (
+                <li key={dayKey} className="flex items-center justify-between gap-4 py-4">
+                  <span className="font-sans text-sm text-white/75">{t(dayKey)}</span>
+                  <span className="font-sans text-sm font-semibold text-white">{t(timeKey)}</span>
                 </li>
               ))}
             </ul>
 
             <p className="text-white/65 text-xs font-sans leading-relaxed mt-6">
-              Visit the Bellingham showroom to view current granite, quartz, remnant, and sale color selections.
+              {t('service.showroom_desc')}
             </p>
           </motion.div>
         </div>

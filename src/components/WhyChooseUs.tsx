@@ -1,36 +1,18 @@
 import { motion } from 'framer-motion';
 import { BadgeDollarSign, Gem, Ruler, MapPin } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
-
-const features = [
-  {
-    icon: BadgeDollarSign,
-    title: 'Free Estimates',
-    description:
-      'Start your kitchen, bath, outdoor kitchen, or fireplace project with a clear estimate and practical guidance.',
-  },
-  {
-    icon: Gem,
-    title: 'Large Stone Selection',
-    description:
-      'Granite, quartz, marble, quartzite, porcelain, remnants, stainless steel sinks, and premium brand options.',
-  },
-  {
-    icon: Ruler,
-    title: 'Custom Edging',
-    description:
-      'Choose simple or detailed edge profiles cut for the exact countertop material and style of your home.',
-  },
-  {
-    icon: MapPin,
-    title: 'Family-Owned Service',
-    description:
-      'Visit the showroom at 10 Mill St in Bellingham to view current materials, remnants, and sale colors.',
-  },
-];
+import { useI18n } from '../i18n/I18nContext';
 
 export default function WhyChooseUs() {
+  const { t } = useI18n();
   const [ref, inView] = useInView(0.15);
+
+  const features = [
+    { icon: BadgeDollarSign, title: t('why.f1_title'), description: t('why.f1_desc') },
+    { icon: Gem,             title: t('why.f2_title'), description: t('why.f2_desc') },
+    { icon: Ruler,           title: t('why.f3_title'), description: t('why.f3_desc') },
+    { icon: MapPin,          title: t('why.f4_title'), description: t('why.f4_desc') },
+  ];
 
   return (
     <section id="services" className="py-24 bg-[#FFFFFF]">
@@ -43,10 +25,10 @@ export default function WhyChooseUs() {
             transition={{ duration: 0.6 }}
           >
             <p className="text-[#B91C1C] text-xs tracking-[0.3em] font-sans uppercase mb-4">
-              The St. Joseph Difference
+              {t('why.label')}
             </p>
             <h2 className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium">
-              Countertops, Fireplaces, Remnants &amp; More
+              {t('why.heading')}
             </h2>
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-[#B91C1C]" />

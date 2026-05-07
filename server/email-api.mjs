@@ -154,9 +154,15 @@ function completionHtml(lead) {
             <p style="margin:0 0 6px;font-size:14px;color:#171717;"><strong>Type:</strong> ${escapeHtml(lead.project_type)}</p>
             <p style="margin:0;font-size:14px;color:#171717;"><strong>Stone:</strong> ${escapeHtml(lead.stone_type)}</p>
           </div>
-          <p style="font-size:15px;line-height:1.7;margin:0 0 24px;color:#4b5563;">
-            We would love to hear your feedback! If you are happy with the result, a quick review would mean the world to us and help other homeowners find quality service.
+          <p style="font-size:15px;line-height:1.7;margin:0 0 20px;color:#4b5563;">
+            We would love to hear your feedback! If you are happy with the result, a quick Google review would mean the world to us and help other homeowners find quality service.
           </p>
+          <div style="text-align:center;margin:0 0 28px;">
+            <a href="https://search.google.com/local/writereview?placeid=ChIJhXNxUndu5IkR_FceUespc40"
+               style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;letter-spacing:0.3px;">
+              ⭐ Leave a Google Review
+            </a>
+          </div>
           <div style="border-top:1px solid #e5e7eb;padding-top:20px;">
             <p style="margin:0 0 6px;font-size:13px;color:#737373;">Questions? Contact us anytime:</p>
             <p style="margin:0;font-size:15px;color:#171717;font-weight:600;">📞 (774) 433-2580</p>

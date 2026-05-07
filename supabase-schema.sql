@@ -13,7 +13,7 @@ create table if not exists public.estimate_requests (
   photo_names text[] default '{}',
   contacted boolean not null default false,
   contacted_at timestamptz,
-  interest_level text check (interest_level in ('hot', 'warm', 'cold')),
+  interest_level text check (interest_level in ('1', '2', '3')),
   status text not null default 'new' check (status in ('new', 'contacted', 'quoted', 'won', 'lost')),
   notes text,
   source text not null default 'website'
@@ -30,8 +30,10 @@ alter table public.estimate_requests
 do $$
 begin
   alter table public.estimate_requests
+    drop constraint if exists estimate_requests_interest_level_check;
+  alter table public.estimate_requests
     add constraint estimate_requests_interest_level_check
-    check (interest_level in ('hot', 'warm', 'cold'));
+    check (interest_level in ('1', '2', '3'));
 exception
   when duplicate_object then null;
 end $$;

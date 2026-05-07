@@ -1,17 +1,19 @@
 import { motion } from 'framer-motion';
 import { useInView } from '../hooks/useInView';
+import { useI18n } from '../i18n/I18nContext';
 
 const brands = [
-  { name: 'Cambria', tagline: 'American Quartz' },
-  { name: 'Silestone', tagline: 'by Cosentino' },
-  { name: 'Caesarstone', tagline: 'Premium Quartz' },
-  { name: 'MSI', tagline: 'Natural Stone' },
-  { name: 'HanStone', tagline: 'Quartz Surfaces' },
-  { name: 'Spectrum', tagline: 'Stone Surfaces' },
-  { name: 'Infinity', tagline: 'Premium Porcelain' },
+  { name: 'Cambria',      taglineKey: 'brands.tag_american_quartz' },
+  { name: 'Silestone',    taglineKey: 'brands.tag_by_cosentino' },
+  { name: 'Caesarstone',  taglineKey: 'brands.tag_premium_quartz' },
+  { name: 'MSI',          taglineKey: 'brands.tag_natural_stone' },
+  { name: 'HanStone',     taglineKey: 'brands.tag_quartz_surfaces' },
+  { name: 'Spectrum',     taglineKey: 'brands.tag_stone_surfaces' },
+  { name: 'Infinity',     taglineKey: 'brands.tag_premium_porcelain' },
 ];
 
 export default function Brands() {
+  const { t } = useI18n();
   const [ref, inView] = useInView(0.2);
 
   return (
@@ -24,7 +26,7 @@ export default function Brands() {
           transition={{ duration: 0.6 }}
           className="text-center text-[#5F5F5F] text-xs tracking-[0.25em] font-sans uppercase mb-8"
         >
-          Premium Stone, Quartz &amp; Porcelain Brand Options
+          {t('brands.heading')}
         </motion.p>
         <div className="flex flex-wrap justify-center items-center gap-10 lg:gap-16">
           {brands.map((brand, i) => (
@@ -39,7 +41,7 @@ export default function Brands() {
                 {brand.name}
               </span>
               <span className="text-[#5F5F5F] text-[10px] tracking-[0.15em] font-sans uppercase mt-0.5">
-                {brand.tagline}
+                {t(brand.taglineKey)}
               </span>
             </motion.div>
           ))}

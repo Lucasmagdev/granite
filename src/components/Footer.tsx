@@ -1,19 +1,22 @@
 import { Phone, MapPin, CreditCard, Languages } from 'lucide-react';
-
-const services = [
-  'Kitchen Countertops',
-  'Bathroom Vanities',
-  'Outdoor Kitchens',
-  'Indoor & Outdoor Fireplaces',
-  'Custom Firepits',
-  'Custom Edging',
-  'Remnant Countertops',
-  'Stainless Steel Sinks',
-];
+import { useI18n } from '../i18n/I18nContext';
 
 const payments = ['Visa', 'Mastercard', 'American Express', 'Discover', 'Cash', 'Check', 'Zelle'];
 
 export default function Footer() {
+  const { t } = useI18n();
+
+  const services = [
+    t('footer.s1'), t('footer.s2'), t('footer.s3'), t('footer.s4'),
+    t('footer.s5'), t('footer.s6'), t('footer.s7'), t('footer.s8'),
+  ];
+
+  const hours = [
+    { day: t('footer.mon_fri'), time: '9:00 AM-5:00 PM' },
+    { day: t('footer.sat'),     time: '9:00 AM-2:00 PM' },
+    { day: t('footer.sun'),     time: t('footer.closed') },
+  ];
+
   return (
     <footer className="bg-[#B91C1C] text-white">
       <div className="max-w-7xl mx-auto px-5 lg:px-8 pt-16 pb-8">
@@ -24,8 +27,7 @@ export default function Footer() {
               <p className="text-white text-xl tracking-[0.2em] font-serif font-semibold">GRANITE</p>
             </div>
             <p className="text-white/55 text-sm font-sans leading-relaxed mb-6">
-              Local, family-owned stone specialists offering granite, quartz, marble, quartzite,
-              porcelain, remnants, countertops, and custom fireplace work.
+              {t('footer.desc')}
             </p>
             <div className="flex flex-col gap-3">
               <a
@@ -41,14 +43,14 @@ export default function Footer() {
               </div>
               <div className="flex items-start gap-3 text-white/65 text-sm font-sans">
                 <Languages size={14} className="text-white shrink-0 mt-0.5" />
-                <span>English and Spanish available</span>
+                <span>{t('footer.languages')}</span>
               </div>
             </div>
           </div>
 
           <div>
             <h4 className="text-white text-sm font-sans font-semibold tracking-wider uppercase mb-5">
-              Services
+              {t('footer.services')}
             </h4>
             <ul className="flex flex-col gap-2.5">
               {services.map((s) => (
@@ -63,7 +65,7 @@ export default function Footer() {
 
           <div>
             <h4 className="text-white text-sm font-sans font-semibold tracking-wider uppercase mb-5">
-              Visit Us
+              {t('footer.visit')}
             </h4>
             <p className="text-white/65 text-sm font-sans leading-relaxed">
               10 Mill St<br />
@@ -75,25 +77,21 @@ export default function Footer() {
               rel="noreferrer"
               className="inline-flex text-white hover:text-white/80 text-sm font-sans font-semibold mt-4"
             >
-              Get Directions
+              {t('footer.directions')}
             </a>
             <div className="mt-5 pt-5 border-t border-white/10">
               <p className="text-white/35 text-xs font-sans leading-relaxed">
-                One showroom location for current slabs, remnants, and sale colors.
+                {t('footer.showroom_note')}
               </p>
             </div>
           </div>
 
           <div>
             <h4 className="text-white text-sm font-sans font-semibold tracking-wider uppercase mb-5">
-              Showroom Hours
+              {t('footer.hours')}
             </h4>
             <ul className="flex flex-col gap-2 mb-7">
-              {[
-                { day: 'Monday-Friday', time: '9:00 AM-5:00 PM' },
-                { day: 'Saturday', time: '9:00 AM-2:00 PM' },
-                { day: 'Sunday', time: 'Closed' },
-              ].map(({ day, time }) => (
+              {hours.map(({ day, time }) => (
                 <li key={day} className="flex flex-col">
                   <span className="text-white/65 text-xs font-sans">{day}</span>
                   <span className="text-white/45 text-xs font-sans">{time}</span>
@@ -102,7 +100,7 @@ export default function Footer() {
             </ul>
 
             <h4 className="text-white text-xs font-sans font-semibold tracking-wider uppercase mb-3">
-              Payment Types
+              {t('footer.payments')}
             </h4>
             <div className="flex flex-wrap gap-2">
               {payments.map((payment) => (
@@ -120,10 +118,10 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-white/35 text-xs font-sans">
-            &copy; {new Date().getFullYear()} St. Joseph Granite. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('footer.copyright')}
           </p>
           <p className="text-white/35 text-xs font-sans">
-            We help make your dreams come true.
+            {t('footer.tagline')}
           </p>
         </div>
       </div>

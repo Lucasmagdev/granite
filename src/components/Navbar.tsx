@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
-const navItems = ['Home', 'Services', 'Projects', 'Reviews', 'Contact'];
+const navSections = [
+  { id: 'home',     key: 'nav.home' },
+  { id: 'services', key: 'nav.services' },
+  { id: 'projects', key: 'nav.projects' },
+  { id: 'reviews',  key: 'nav.reviews' },
+  { id: 'contact',  key: 'nav.contact' },
+] as const;
 
 export default function Navbar() {
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -16,7 +24,7 @@ export default function Navbar() {
 
   const scrollTo = (id: string) => {
     setMobileOpen(false);
-    const el = document.getElementById(id.toLowerCase());
+    const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -33,7 +41,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between">
-          {/* Logo */}
           <button
             onClick={() => scrollTo('home')}
             className="flex items-center gap-2 group"
@@ -45,20 +52,18 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
+            {navSections.map(({ id, key }) => (
               <button
-                key={item}
-                onClick={() => scrollTo(item.toLowerCase())}
+                key={id}
+                onClick={() => scrollTo(id)}
                 className="text-white/85 hover:text-white text-sm tracking-wide font-sans font-medium transition-colors duration-200"
               >
-                {item}
+                {t(key)}
               </button>
             ))}
           </nav>
 
-          {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-4">
             <a
               href="tel:+17744332580"
@@ -71,11 +76,10 @@ export default function Navbar() {
               onClick={() => scrollTo('contact')}
               className="bg-white hover:bg-[#F3F4F6] text-[#B91C1C] text-sm font-sans font-semibold px-5 py-2.5 rounded transition-all duration-200 tracking-wide"
             >
-              Get Free Estimate
+              {t('nav.cta')}
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden text-white p-1"
@@ -86,7 +90,6 @@ export default function Navbar() {
         </div>
       </motion.header>
 
-      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -97,13 +100,13 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-[#B91C1C] flex flex-col pt-20 px-8"
           >
             <nav className="flex flex-col gap-6 mt-6">
-              {navItems.map((item) => (
+              {navSections.map(({ id, key }) => (
                 <button
-                  key={item}
-                  onClick={() => scrollTo(item.toLowerCase())}
+                  key={id}
+                  onClick={() => scrollTo(id)}
                   className="text-white/85 hover:text-white text-2xl font-serif text-left transition-colors duration-200"
                 >
-                  {item}
+                  {t(key)}
                 </button>
               ))}
             </nav>
@@ -119,7 +122,7 @@ export default function Navbar() {
                 onClick={() => scrollTo('contact')}
                 className="bg-white text-[#B91C1C] py-3 rounded text-base font-sans font-semibold"
               >
-                Get Free Estimate
+                {t('nav.cta')}
               </button>
             </div>
           </motion.div>

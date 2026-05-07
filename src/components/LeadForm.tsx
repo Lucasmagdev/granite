@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Clock, Mail, Phone, Upload } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useI18n } from '../i18n/I18nContext';
 
 const inputClass =
   'w-full bg-white border border-[#E5E7EB] rounded-lg px-4 py-3 text-sm font-sans text-[#171717] placeholder-[#737373] focus:outline-none focus:border-[#B91C1C] focus:ring-2 focus:ring-[#B91C1C]/20 transition-all duration-200';
@@ -52,33 +53,8 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-function validate(values: FormValues) {
-  const errors: FieldErrors = {};
-
-  if (values.name.trim().length < 2) {
-    errors.name = 'Please enter your name.';
-  }
-
-  if (phoneDigits(values.phone).length !== 10) {
-    errors.phone = 'Enter a 10-digit phone number.';
-  }
-
-  if (!isValidEmail(values.email)) {
-    errors.email = 'Enter a valid email address.';
-  }
-
-  if (!values.project_type) {
-    errors.project_type = 'Choose a project type.';
-  }
-
-  if (!values.stone_type) {
-    errors.stone_type = 'Choose a stone type.';
-  }
-
-  return errors;
-}
-
 export default function LeadForm() {
+  const { t } = useI18n();
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState('');
   const [fileName, setFileName] = useState('');
@@ -106,6 +82,16 @@ export default function LeadForm() {
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
   };
 
+  const validate = (vals: FormValues): FieldErrors => {
+    const errors: FieldErrors = {};
+    if (vals.name.trim().length < 2) errors.name = t('form.err_name');
+    if (phoneDigits(vals.phone).length !== 10) errors.phone = t('form.err_phone');
+    if (!isValidEmail(vals.email)) errors.email = t('form.err_email');
+    if (!vals.project_type) errors.project_type = t('form.err_project');
+    if (!vals.stone_type) errors.stone_type = t('form.err_stone');
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
@@ -114,7 +100,7 @@ export default function LeadForm() {
     setFieldErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      setError('Please review the highlighted fields before sending.');
+      setError(t('form.err_review'));
       return;
     }
 
@@ -139,7 +125,7 @@ export default function LeadForm() {
     setSubmitting(false);
 
     if (insertError) {
-      setError('We could not send your request right now. Please call (774) 433-2580.');
+      setError(t('form.err_submit'));
       return;
     }
 
@@ -180,27 +166,27 @@ export default function LeadForm() {
             <CheckCircle size={34} className="text-[#B91C1C]" />
           </div>
           <p className="text-[#B91C1C] text-[10px] tracking-[0.24em] font-sans font-semibold uppercase mb-3">
-            Request Received
+            {t('form.success_label')}
           </p>
           <h3 className="font-serif text-3xl text-[#171717] mb-3">
-            Thank you{submittedName ? `, ${submittedName.split(' ')[0]}` : ''}.
+            {t('form.success_thanks')}{submittedName ? `, ${submittedName.split(' ')[0]}` : ''}.
           </h3>
           <p className="text-[#5F5F5F] font-sans text-sm leading-relaxed mb-6">
-            We received your estimate request. Our team will review your project details and contact you during business hours.
+            {t('form.success_desc')}
           </p>
 
           <div className="grid grid-cols-1 gap-3 text-left">
             <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3">
               <Clock size={17} className="text-[#B91C1C]" />
               <div>
-                <p className="text-sm font-semibold text-[#171717]">Business hours</p>
-                <p className="text-xs text-[#737373]">Mon-Fri 9:00 am - 5:00 pm, Sat 9:00 am - 2:00 pm</p>
+                <p className="text-sm font-semibold text-[#171717]">{t('form.hours_label')}</p>
+                <p className="text-xs text-[#737373]">{t('form.hours_detail')}</p>
               </div>
             </div>
             <a href="tel:7744332580" className="flex items-center gap-3 rounded-lg border border-[#B91C1C]/25 bg-[#B91C1C]/5 px-4 py-3 hover:bg-[#B91C1C]/10 transition">
               <Phone size={17} className="text-[#B91C1C]" />
               <div>
-                <p className="text-sm font-semibold text-[#171717]">Need faster help?</p>
+                <p className="text-sm font-semibold text-[#171717]">{t('form.faster_help')}</p>
                 <p className="text-xs text-[#B91C1C]">(774) 433-2580</p>
               </div>
               <ArrowRight size={15} className="ml-auto text-[#B91C1C]" />
@@ -221,14 +207,14 @@ export default function LeadForm() {
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-1">
           <div className="h-px flex-1 bg-[#B91C1C]/30" />
-          <span className="text-[#B91C1C] text-[10px] tracking-[0.2em] font-sans font-medium uppercase">Free Estimate</span>
+          <span className="text-[#B91C1C] text-[10px] tracking-[0.2em] font-sans font-medium uppercase">{t('form.label')}</span>
           <div className="h-px flex-1 bg-[#B91C1C]/30" />
         </div>
-        <h2 className="font-serif text-xl text-[#171717] text-center mt-2">Request Your FREE Estimate</h2>
+        <h2 className="font-serif text-xl text-[#171717] text-center mt-2">{t('form.heading')}</h2>
 
         <div className="mt-5">
           <div className="mb-2 flex items-center justify-between text-[11px] font-sans text-[#737373]">
-            <span>Form progress</span>
+            <span>{t('form.progress')}</span>
             <span className="font-semibold text-[#B91C1C]">{progress}%</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-[#F1F5F9]">
@@ -249,7 +235,7 @@ export default function LeadForm() {
               required
               name="name"
               type="text"
-              placeholder="Name"
+              placeholder={t('form.name')}
               className={`${inputClass} ${fieldErrors.name ? 'border-[#B91C1C]' : ''}`}
               value={values.name}
               onChange={(e) => updateValue('name', e.target.value)}
@@ -263,7 +249,7 @@ export default function LeadForm() {
               name="phone"
               type="tel"
               inputMode="tel"
-              placeholder="Phone"
+              placeholder={t('form.phone')}
               className={`${inputClass} ${fieldErrors.phone ? 'border-[#B91C1C]' : ''}`}
               value={values.phone}
               onChange={(e) => updateValue('phone', e.target.value)}
@@ -278,7 +264,7 @@ export default function LeadForm() {
             required
             name="email"
             type="email"
-            placeholder="Email"
+            placeholder={t('form.email')}
             className={`${inputClass} ${fieldErrors.email ? 'border-[#B91C1C]' : ''}`}
             value={values.email}
             onChange={(e) => updateValue('email', e.target.value)}
@@ -290,7 +276,7 @@ export default function LeadForm() {
         <input
           name="address"
           type="text"
-          placeholder="Address or City"
+          placeholder={t('form.address')}
           className={inputClass}
           value={values.address}
           onChange={(e) => updateValue('address', e.target.value)}
@@ -307,12 +293,12 @@ export default function LeadForm() {
                 onChange={(e) => updateValue('project_type', e.target.value)}
                 aria-invalid={Boolean(fieldErrors.project_type)}
               >
-                <option value="" disabled>Project Type</option>
-                <option>Kitchen Countertop</option>
-                <option>Bathroom Vanity</option>
-                <option>Outdoor Kitchen</option>
-                <option>Fireplace or Firepit</option>
-                <option>Remnant Countertop</option>
+                <option value="" disabled>{t('form.project_type')}</option>
+                <option value="Kitchen Countertop">{t('form.kitchen')}</option>
+                <option value="Bathroom Vanity">{t('form.bathroom')}</option>
+                <option value="Outdoor Kitchen">{t('form.outdoor_kitchen')}</option>
+                <option value="Fireplace or Firepit">{t('form.fireplace')}</option>
+                <option value="Remnant Countertop">{t('form.remnant')}</option>
               </select>
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
             </div>
@@ -328,13 +314,13 @@ export default function LeadForm() {
                 onChange={(e) => updateValue('stone_type', e.target.value)}
                 aria-invalid={Boolean(fieldErrors.stone_type)}
               >
-                <option value="" disabled>Stone Type</option>
-                <option>Granite</option>
-                <option>Quartz</option>
-                <option>Marble</option>
-                <option>Quartzite</option>
-                <option>Porcelain</option>
-                <option>Not Sure Yet</option>
+                <option value="" disabled>{t('form.stone_type')}</option>
+                <option value="Granite">{t('form.granite')}</option>
+                <option value="Quartz">{t('form.quartz')}</option>
+                <option value="Marble">{t('form.marble')}</option>
+                <option value="Quartzite">{t('form.quartzite')}</option>
+                <option value="Porcelain">{t('form.porcelain')}</option>
+                <option value="Not Sure Yet">{t('form.not_sure')}</option>
               </select>
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
             </div>
@@ -346,7 +332,7 @@ export default function LeadForm() {
           <input
             name="measurements"
             type="text"
-            placeholder="Measurements"
+            placeholder={t('form.measurements')}
             className={inputClass}
             value={values.measurements}
             onChange={(e) => updateValue('measurements', e.target.value)}
@@ -358,11 +344,11 @@ export default function LeadForm() {
               value={values.timeline}
               onChange={(e) => updateValue('timeline', e.target.value)}
             >
-              <option value="" disabled>Timeline</option>
-              <option>ASAP</option>
-              <option>Within 30 Days</option>
-              <option>1-3 Months</option>
-              <option>Just Researching</option>
+              <option value="" disabled>{t('form.timeline')}</option>
+              <option value="ASAP">{t('form.asap')}</option>
+              <option value="Within 30 Days">{t('form.within_30')}</option>
+              <option value="1-3 Months">{t('form.months_1_3')}</option>
+              <option value="Just Researching">{t('form.researching')}</option>
             </select>
             <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
           </div>
@@ -374,7 +360,7 @@ export default function LeadForm() {
           className="w-full border-2 border-dashed border-[#E5E7EB] hover:border-[#B91C1C] rounded-lg px-4 py-3 text-sm font-sans text-[#737373] hover:text-[#B91C1C] flex items-center justify-center gap-2 transition-all duration-200"
         >
           <Upload size={15} />
-          {fileName || 'Upload Project Photos (optional)'}
+          {fileName || t('form.upload')}
         </button>
         <input
           ref={fileRef}
@@ -392,7 +378,7 @@ export default function LeadForm() {
         <textarea
           name="comments"
           rows={3}
-          placeholder="Tell us about your project..."
+          placeholder={t('form.comments')}
           className={`${inputClass} resize-none`}
           value={values.comments}
           onChange={(e) => updateValue('comments', e.target.value)}
@@ -411,12 +397,12 @@ export default function LeadForm() {
           whileTap={{ scale: 0.99 }}
           className="w-full bg-[#171717] hover:bg-[#B91C1C] disabled:bg-[#737373] disabled:cursor-not-allowed text-white font-sans font-semibold text-sm tracking-widest py-4 rounded-lg transition-all duration-300 mt-1"
         >
-          {submitting ? 'SENDING...' : 'GET MY FREE ESTIMATE'}
+          {submitting ? t('form.sending') : t('form.submit')}
         </motion.button>
 
         <div className="grid grid-cols-2 gap-2 text-[11px] text-[#737373] font-sans">
           <span className="inline-flex items-center justify-center gap-1 rounded-lg bg-[#FAFAFA] px-2 py-2">
-            <CheckCircle size={12} className="text-[#B91C1C]" /> Free estimates
+            <CheckCircle size={12} className="text-[#B91C1C]" /> {t('form.free_estimates')}
           </span>
           <a href="tel:7744332580" className="inline-flex items-center justify-center gap-1 rounded-lg bg-[#FAFAFA] px-2 py-2 hover:text-[#B91C1C] transition">
             <Mail size={12} className="text-[#B91C1C]" /> (774) 433-2580

@@ -1,14 +1,16 @@
 import { motion } from 'framer-motion';
 import { Phone, ArrowRight } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
+import { useI18n } from '../i18n/I18nContext';
 
 export default function FinalCTA() {
+  const { t } = useI18n();
   const [ref, inView] = useInView(0.2);
 
   const scrollToContact = () => {
     document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
     setTimeout(() => {
-      document.querySelector<HTMLInputElement>('input[placeholder="Name"]')?.focus();
+      document.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
     }, 700);
   };
 
@@ -33,14 +35,13 @@ export default function FinalCTA() {
           transition={{ duration: 0.7 }}
         >
           <p className="text-white/85 text-xs tracking-[0.3em] font-sans uppercase mb-5">
-            Clearance Sale
+            {t('cta.label')}
           </p>
           <h2 className="font-serif text-3xl lg:text-5xl text-white font-medium leading-[1.2] mb-5">
-            Granite &amp; Quartz at Deep Discounts
+            {t('cta.heading')}
           </h2>
           <p className="text-white/65 font-sans text-base lg:text-lg leading-relaxed mb-10">
-            Ask about current sale colors and remnant countertops. The showroom also offers a free sink
-            with qualifying 50+ square foot projects while promotion details are available.
+            {t('cta.desc')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -50,7 +51,7 @@ export default function FinalCTA() {
               onClick={scrollToContact}
               className="flex items-center justify-center gap-2 bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-9 py-4 rounded transition-all duration-200"
             >
-              Request Free Estimate
+              {t('cta.estimate')}
               <ArrowRight size={15} />
             </motion.button>
             <motion.a
@@ -60,7 +61,7 @@ export default function FinalCTA() {
               className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-9 py-4 rounded transition-all duration-200"
             >
               <Phone size={15} />
-              Call (774) 433-2580
+              {t('cta.call')}
             </motion.a>
           </div>
         </motion.div>

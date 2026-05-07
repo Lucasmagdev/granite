@@ -1,16 +1,19 @@
 import { motion } from 'framer-motion';
 import { Star, Zap, Diamond, FileText, Phone } from 'lucide-react';
 import LeadForm from './LeadForm';
-
-const badges = [
-  { icon: Star, label: '56 Ratings & Reviews' },
-  { icon: Star, label: 'Over 20 Years' },
-  { icon: Zap, label: 'Exceptional Prices' },
-  { icon: Diamond, label: 'Huge Countertop Selection' },
-  { icon: FileText, label: 'Free Estimates' },
-];
+import { useI18n } from '../i18n/I18nContext';
 
 export default function Hero() {
+  const { t } = useI18n();
+
+  const badges = [
+    { icon: Star,     label: t('hero.badge_reviews') },
+    { icon: Star,     label: t('hero.badge_years') },
+    { icon: Zap,      label: t('hero.badge_prices') },
+    { icon: Diamond,  label: t('hero.badge_selection') },
+    { icon: FileText, label: t('hero.badge_estimates') },
+  ];
+
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -27,12 +30,10 @@ export default function Hero() {
         backgroundAttachment: 'fixed',
       }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/90 via-[#7F1D1D]/78 to-[#B91C1C]/48" />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 lg:px-8 pt-28 pb-16 lg:pt-36 lg:pb-24">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Left Content */}
           <div className="flex-1 text-white max-w-xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -42,7 +43,7 @@ export default function Hero() {
             >
               <div className="h-px w-10 bg-[#B91C1C]" />
               <span className="text-white text-xs tracking-[0.3em] font-sans font-medium uppercase">
-                Bellingham, Massachusetts
+                {t('hero.location')}
               </span>
             </motion.div>
 
@@ -52,8 +53,8 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="font-serif text-4xl lg:text-5xl xl:text-[3.4rem] leading-[1.15] font-medium mb-6"
             >
-              St. Joseph Granite Countertops{' '}
-              <em className="text-white not-italic">Made for Real Homes</em>
+              {t('hero.heading_main')}{' '}
+              <em className="text-white not-italic">{t('hero.heading_em')}</em>
             </motion.h1>
 
             <motion.p
@@ -62,9 +63,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="font-sans text-base lg:text-lg text-white/70 leading-relaxed mb-8"
             >
-              Custom granite, quartz, marble, quartzite, and porcelain surfaces
-              for kitchens, bathrooms, outdoor kitchens, fireplaces, and firepits.
-              Free estimates, exceptional prices, and over 20 years of experience.
+              {t('hero.desc')}
             </motion.p>
 
             <motion.div
@@ -73,12 +72,11 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.25 }}
               className="mb-8 inline-flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm text-white/85 backdrop-blur-sm"
             >
-              <span>10 Mill St, Bellingham, MA 02019</span>
+              <span>{t('hero.address')}</span>
               <span className="hidden sm:inline h-4 w-px bg-white/25" />
-              <span>Open - Closes 5:00 pm</span>
+              <span>{t('hero.hours')}</span>
             </motion.div>
 
-            {/* Trust Badges */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -96,7 +94,6 @@ export default function Hero() {
               ))}
             </motion.div>
 
-            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -109,7 +106,7 @@ export default function Hero() {
                 onClick={scrollToContact}
                 className="bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-8 py-4 rounded transition-all duration-200"
               >
-                Get Free Estimate
+                {t('hero.cta')}
               </motion.button>
               <motion.a
                 href="tel:+17744332580"
@@ -122,7 +119,6 @@ export default function Hero() {
               </motion.a>
             </motion.div>
 
-            {/* Social proof */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -146,20 +142,18 @@ export default function Hero() {
                   ))}
                 </div>
                 <p className="text-white/60 text-[11px] font-sans">
-                  Local, family-owned stone specialists
+                  {t('hero.social_proof')}
                 </p>
               </div>
             </motion.div>
           </div>
 
-          {/* Right Lead Form */}
           <div className="w-full lg:w-auto lg:min-w-[460px]">
             <LeadForm />
           </div>
         </div>
       </div>
 
-      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FFFFFF] to-transparent" />
     </section>
   );
