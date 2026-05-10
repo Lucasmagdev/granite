@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from '../hooks/useInView';
 import { useI18n } from '../i18n/I18nContext';
+import AnimatedHeading from './AnimatedHeading';
 
 const imagesSrc = [
-  { src: 'https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=800',  categoryKey: 'gallery.kitchen',    span: 'col-span-2 row-span-2' },
+  { src: 'https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=800',  categoryKey: 'gallery.kitchen',    span: 'col-span-2 lg:col-span-2 lg:row-span-2' },
   { src: 'https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=600',  categoryKey: 'gallery.quartz',     span: '' },
   { src: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=600',  categoryKey: 'gallery.outdoor',    span: '' },
   { src: 'https://images.pexels.com/photos/279648/pexels-photo-279648.jpeg?auto=compress&cs=tinysrgb&w=600',   categoryKey: 'gallery.granite',    span: '' },
@@ -31,9 +32,12 @@ export default function Gallery() {
             <p className="text-[#B91C1C] text-xs tracking-[0.3em] font-sans uppercase mb-4">
               {t('gallery.label')}
             </p>
-            <h2 className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium">
-              {t('gallery.heading')}
-            </h2>
+            <AnimatedHeading
+              text={t('gallery.heading')}
+              inView={inView}
+              delay={0.2}
+              className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium"
+            />
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-[#B91C1C]" />
               <div className="w-1.5 h-1.5 rounded-full bg-[#B91C1C]" />
@@ -42,7 +46,7 @@ export default function Gallery() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[220px] gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[160px] lg:auto-rows-[220px] gap-3">
           {imagesSrc.map((img, i) => (
             <motion.div
               key={i}
@@ -60,17 +64,14 @@ export default function Gallery() {
                 animate={{ scale: hovered === i ? 1.07 : 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               />
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-t from-[#111111]/82 via-[#111111]/20 to-transparent flex items-end p-5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: hovered === i ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
+              <div
+                className={`absolute inset-0 bg-gradient-to-t from-[#111111]/82 via-[#111111]/20 to-transparent flex items-end p-5 transition-opacity duration-300 opacity-100 lg:opacity-0 ${hovered === i ? 'lg:opacity-100' : ''}`}
               >
                 <div>
                   <div className="h-px w-8 bg-[#EF4444] mb-2" />
                   <p className="text-white font-serif text-base font-medium">{t(img.categoryKey)}</p>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
           ))}
         </div>

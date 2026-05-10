@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
-import { Phone, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
 import { useI18n } from '../i18n/I18nContext';
+import AnimatedHeading from './AnimatedHeading';
+import { MagneticButton, MagneticAnchor } from './MagneticButton';
 
 export default function FinalCTA() {
   const { t } = useI18n();
@@ -37,32 +39,31 @@ export default function FinalCTA() {
           <p className="text-white/85 text-xs tracking-[0.3em] font-sans uppercase mb-5">
             {t('cta.label')}
           </p>
-          <h2 className="font-serif text-3xl lg:text-5xl text-white font-medium leading-[1.2] mb-5">
-            {t('cta.heading')}
-          </h2>
+          <AnimatedHeading
+            text={t('cta.heading')}
+            inView={inView}
+            delay={0.2}
+            className="font-serif text-3xl lg:text-5xl text-white font-medium leading-[1.2] mb-5"
+          />
           <p className="text-white/65 font-sans text-base lg:text-lg leading-relaxed mb-10">
             {t('cta.desc')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+            <MagneticButton
               onClick={scrollToContact}
-              className="flex items-center justify-center gap-2 bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-9 py-4 rounded transition-all duration-200"
+              className="flex items-center justify-center gap-2 bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-9 py-4 rounded transition-colors duration-200"
             >
               {t('cta.estimate')}
               <ArrowRight size={15} />
-            </motion.button>
-            <motion.a
+            </MagneticButton>
+
+            <MagneticAnchor
               href="tel:+17744332580"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-9 py-4 rounded transition-all duration-200"
+              className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-9 py-4 rounded transition-colors duration-200"
             >
-              <Phone size={15} />
               {t('cta.call')}
-            </motion.a>
+            </MagneticAnchor>
           </div>
         </motion.div>
       </div>

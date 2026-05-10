@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone } from 'lucide-react';
 import { useI18n } from '../i18n/I18nContext';
+import { MagneticButton } from './MagneticButton';
 
 const navSections = [
   { id: 'home',     key: 'nav.home' },
@@ -34,30 +35,29 @@ export default function Navbar() {
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-[#B91C1C]/97 backdrop-blur-md shadow-2xl'
-            : 'bg-transparent'
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-black/5 bg-white transition-all duration-500 ${
+          scrolled ? 'shadow-lg shadow-black/10' : 'shadow-sm shadow-black/[0.04]'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 lg:px-8 h-[76px] flex items-center justify-between gap-8">
           <button
             onClick={() => scrollTo('home')}
-            className="flex items-center gap-2 group"
+            className="group flex min-w-[150px] items-center"
+            aria-label="St. Joseph Granite home"
           >
-            <span className="text-white font-serif text-[10px] tracking-[0.35em] font-medium uppercase leading-none">
-              ST. JOSEPH
-              <br />
-              <span className="text-white text-[15px] tracking-[0.25em] font-semibold">GRANITE</span>
-            </span>
+            <img
+              src="/st-joseph-logo-clean.png"
+              alt="St. Joseph Granite, Inc."
+              className="h-11 w-[150px] object-contain object-left transition duration-300 group-hover:scale-[1.02] sm:h-12 sm:w-[168px]"
+            />
           </button>
 
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex flex-1 items-center justify-center gap-9">
             {navSections.map(({ id, key }) => (
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
-                className="text-white/85 hover:text-white text-sm tracking-wide font-sans font-medium transition-colors duration-200"
+                className="text-[#4B5563] hover:text-[#B91C1C] text-[13px] tracking-wide font-sans font-semibold transition-colors duration-200"
               >
                 {t(key)}
               </button>
@@ -67,22 +67,22 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             <a
               href="tel:+17744332580"
-              className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-sans transition-colors duration-200"
+              className="flex items-center gap-2 text-[#52525B] hover:text-[#B91C1C] text-sm font-sans transition-colors duration-200"
             >
               <Phone size={14} />
               (774) 433-2580
             </a>
-            <button
+            <MagneticButton
               onClick={() => scrollTo('contact')}
-              className="bg-white hover:bg-[#F3F4F6] text-[#B91C1C] text-sm font-sans font-semibold px-5 py-2.5 rounded transition-all duration-200 tracking-wide"
+              className="bg-[#B91C1C] hover:bg-[#991B1B] text-white text-sm font-sans font-semibold px-5 py-2.5 rounded-md shadow-sm shadow-[#B91C1C]/20 transition-colors duration-200 tracking-wide"
             >
               {t('nav.cta')}
-            </button>
+            </MagneticButton>
           </div>
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden text-white p-1"
+            className="lg:hidden text-[#171717] p-1"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}

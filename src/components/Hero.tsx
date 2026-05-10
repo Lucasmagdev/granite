@@ -1,10 +1,18 @@
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Zap, Diamond, FileText, Phone } from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import LeadForm from './LeadForm';
 import { useI18n } from '../i18n/I18nContext';
+import { MagneticButton, MagneticAnchor } from './MagneticButton';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const { t } = useI18n();
+  const bgRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const badges = [
     { icon: Star,     label: t('hero.badge_reviews') },
@@ -14,6 +22,41 @@ export default function Hero() {
     { icon: FileText, label: t('hero.badge_estimates') },
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Background parallax
+      if (bgRef.current) {
+        gsap.to(bgRef.current, {
+          yPercent: 28,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#home',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }
+
+      // Content fade-out on scroll
+      if (contentRef.current) {
+        gsap.to(contentRef.current, {
+          y: -50,
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#home',
+            start: 'center top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -21,19 +64,28 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center"
-      style={{
-        backgroundImage:
-          'url(https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=1920)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
+      className="relative min-h-screen flex items-center overflow-hidden"
     >
+      {/* Parallax background */}
+      <div
+        ref={bgRef}
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            'url(https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=1920)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          top: '-20%',
+          bottom: '-20%',
+        }}
+      />
+
+      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/90 via-[#7F1D1D]/78 to-[#B91C1C]/48" />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 lg:px-8 pt-28 pb-16 lg:pt-36 lg:pb-24">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-5 lg:px-8 pt-28 pb-16 lg:pt-36 lg:pb-24">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          {/* Left Content */}
           <div className="flex-1 text-white max-w-xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -77,6 +129,7 @@ export default function Hero() {
               <span>{t('hero.hours')}</span>
             </motion.div>
 
+            {/* Trust Badges */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -94,31 +147,30 @@ export default function Hero() {
               ))}
             </motion.div>
 
+            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap gap-4"
             >
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
+              <MagneticButton
                 onClick={scrollToContact}
-                className="bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-8 py-4 rounded transition-all duration-200"
+                className="bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-wider px-8 py-4 rounded transition-colors duration-200"
               >
                 {t('hero.cta')}
-              </motion.button>
-              <motion.a
+              </MagneticButton>
+
+              <MagneticAnchor
                 href="tel:+17744332580"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-7 py-4 rounded transition-all duration-200"
+                className="flex items-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-7 py-4 rounded transition-colors duration-200"
               >
                 <Phone size={15} />
                 (774) 433-2580
-              </motion.a>
+              </MagneticAnchor>
             </motion.div>
 
+            {/* Social proof */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -148,12 +200,14 @@ export default function Hero() {
             </motion.div>
           </div>
 
+          {/* Right Lead Form */}
           <div className="w-full lg:w-auto lg:min-w-[460px]">
             <LeadForm />
           </div>
         </div>
       </div>
 
+      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FFFFFF] to-transparent" />
     </section>
   );

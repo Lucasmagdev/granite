@@ -13,14 +13,16 @@ export default function LandingPage() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <Brands />
-      <WhyChooseUs />
-      <Gallery />
-      <Reviews />
-      <ServiceArea />
-      <FinalCTA />
-      <Footer />
+      <main className="pb-[68px] lg:pb-0">
+        <Hero />
+        <Brands />
+        <WhyChooseUs />
+        <Gallery />
+        <Reviews />
+        <ServiceArea />
+        <FinalCTA />
+        <Footer />
+      </main>
       <MobileSticky />
     </>
   );

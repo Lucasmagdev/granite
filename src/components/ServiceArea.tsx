@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Clock, Phone, Star } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
 import { useI18n } from '../i18n/I18nContext';
+import AnimatedHeading from './AnimatedHeading';
 
 export default function ServiceArea() {
   const { t } = useI18n();
@@ -34,9 +35,12 @@ export default function ServiceArea() {
             <p className="text-[#B91C1C] text-xs tracking-[0.3em] font-sans uppercase mb-4">
               {t('service.label')}
             </p>
-            <h2 className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium">
-              {t('service.heading')}
-            </h2>
+            <AnimatedHeading
+              text={t('service.heading')}
+              inView={inView}
+              delay={0.2}
+              className="font-serif text-3xl lg:text-4xl text-[#171717] font-medium"
+            />
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-[#B91C1C]" />
               <div className="w-1.5 h-1.5 rounded-full bg-[#B91C1C]" />

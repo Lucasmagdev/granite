@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
 import { useI18n } from '../i18n/I18nContext';
+import gsap from 'gsap';
+import AnimatedHeading from './AnimatedHeading';
 
 const reviewData = [
   {
@@ -28,6 +30,12 @@ const reviewData = [
   },
 ];
 
+const stats = [
+  { end: 20, suffix: '+', labelKey: 'reviews.stat_years' },
+  { end: 56, suffix: '',  labelKey: 'reviews.stat_reviews' },
+  { end: 7,  suffix: '',  labelKey: 'reviews.stat_payments' },
+];
+
 function StarRating({ count }: { count: number }) {
   return (
     <div className="flex gap-1">
@@ -43,6 +51,28 @@ export default function Reviews() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [ref, inView] = useInView(0.15);
+  const counterRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (!inView || hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    stats.forEach(({ end, suffix }, i) => {
+      const el = counterRefs.current[i];
+      if (!el) return;
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: end,
+        duration: 1.8,
+        ease: 'power3.out',
+        delay: 0.1 * i,
+        onUpdate() {
+          el.textContent = Math.round(obj.val) + suffix;
+        },
+      });
+    });
+  }, [inView]);
 
   const goTo = (idx: number) => {
     setDirection(idx > current ? 1 : -1);
@@ -56,12 +86,6 @@ export default function Reviews() {
     center: { x: 0, opacity: 1 },
     exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
   };
-
-  const stats = [
-    { value: '20+', labelKey: 'reviews.stat_years' },
-    { value: '56',  labelKey: 'reviews.stat_reviews' },
-    { value: '7',   labelKey: 'reviews.stat_payments' },
-  ];
 
   return (
     <section id="reviews" className="py-24 bg-[#B91C1C] relative overflow-hidden">
@@ -78,9 +102,12 @@ export default function Reviews() {
             <p className="text-white/85 text-xs tracking-[0.3em] font-sans uppercase mb-4">
               {t('reviews.label')}
             </p>
-            <h2 className="font-serif text-3xl lg:text-4xl text-white font-medium">
-              {t('reviews.heading')}
-            </h2>
+            <AnimatedHeading
+              text={t('reviews.heading')}
+              inView={inView}
+              delay={0.2}
+              className="font-serif text-3xl lg:text-4xl text-white font-medium"
+            />
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-12 bg-white/50" />
               <div className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -156,10 +183,16 @@ export default function Reviews() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="grid grid-cols-3 gap-6 mt-14 pt-10 border-t border-white/10"
         >
-          {stats.map((stat) => (
-            <div key={stat.labelKey} className="text-center">
-              <p className="font-serif text-3xl lg:text-4xl text-white font-medium">{stat.value}</p>
-              <p className="text-white/75 text-xs font-sans tracking-wide mt-1 uppercase">{t(stat.labelKey)}</p>
+          {stats.map(({ end, suffix, labelKey }, i) => (
+            <div key={labelKey} className="text-center">
+              <p className="font-serif text-3xl lg:text-4xl text-white font-medium">
+                <span ref={(el) => { counterRefs.current[i] = el; }}>
+                  0{suffix}
+                </span>
+              </p>
+              <p className="text-white/75 text-xs font-sans tracking-wide mt-1 uppercase">
+                {t(labelKey)}
+              </p>
             </div>
           ))}
         </motion.div>

@@ -23,3 +23,12 @@ dist-ssr
 .env
 .claude/settings.local.json
 supabase/.temp
+
+# Client docs / sensitive files
+codexy*
+sabor-imperial-*
+WhatsApp Image*
+
+# Large binary assets
+imagens/
+dev-dist/

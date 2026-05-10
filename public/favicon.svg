@@ -1,26 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="80" fill="#1a1a2e"/>
-  <!-- Stone texture background -->
-  <rect x="60" y="140" width="392" height="232" rx="12" fill="#2d4a3e"/>
-  <rect x="60" y="140" width="392" height="232" rx="12" fill="url(#grain)" opacity="0.3"/>
-  <!-- Granite slab with veins -->
-  <rect x="80" y="160" width="352" height="192" rx="8" fill="#4a7c59"/>
-  <!-- Veins -->
-  <path d="M100 200 Q180 180 260 210 Q340 240 420 220" stroke="#6b9e7a" stroke-width="3" fill="none" opacity="0.7"/>
-  <path d="M80 250 Q160 230 240 255 Q320 280 432 260" stroke="#5a8e69" stroke-width="2" fill="none" opacity="0.5"/>
-  <path d="M100 300 Q200 285 280 305 Q360 325 420 310" stroke="#7aae89" stroke-width="2" fill="none" opacity="0.6"/>
-  <!-- Gold accent line (countertop edge) -->
-  <rect x="80" y="348" width="352" height="8" rx="4" fill="#c9a84c"/>
-  <!-- SJG letters -->
-  <text x="256" y="310" font-family="Georgia, serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle" opacity="0.9">SJG</text>
-  <!-- Stars/sparkle accents -->
-  <circle cx="130" cy="195" r="3" fill="white" opacity="0.5"/>
-  <circle cx="390" cy="175" r="2" fill="white" opacity="0.4"/>
-  <circle cx="360" cy="340" r="2.5" fill="white" opacity="0.4"/>
-  <defs>
-    <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
-    </filter>
-  </defs>
+  <rect width="512" height="512" rx="96" fill="#f7f4ee"/>
+  <rect x="58" y="346" width="396" height="34" rx="17" fill="#a90f16"/>
+  <path d="M84 394h344" stroke="#303946" stroke-width="20" stroke-linecap="round"/>
+  <text
+    x="256"
+    y="310"
+    fill="#a90f16"
+    font-family="Georgia, Times New Roman, serif"
+    font-size="248"
+    font-weight="700"
+    text-anchor="middle"
+    letter-spacing="-24"
+  >SJ</text>
 </svg>

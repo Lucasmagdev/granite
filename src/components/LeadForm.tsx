@@ -1,8 +1,9 @@
-import { useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle, Clock, Mail, Phone, Upload } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Phone, Upload } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useI18n } from '../i18n/I18nContext';
+import gsap from 'gsap';
 
 const inputClass =
   'w-full bg-white border border-[#E5E7EB] rounded-lg px-4 py-3 text-sm font-sans text-[#171717] placeholder-[#737373] focus:outline-none focus:border-[#B91C1C] focus:ring-2 focus:ring-[#B91C1C]/20 transition-all duration-200';
@@ -55,6 +56,7 @@ function isValidEmail(value: string) {
 
 export default function LeadForm() {
   const { t } = useI18n();
+  const [step, setStep] = useState<1 | 2>(1);
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState('');
   const [fileName, setFileName] = useState('');
@@ -64,17 +66,19 @@ export default function LeadForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
+  const step1Ref = useRef<HTMLDivElement>(null);
+  const step2Ref = useRef<HTMLDivElement>(null);
 
-  const progress = useMemo(() => {
-    const required = [
-      values.name.trim().length >= 2,
-      phoneDigits(values.phone).length === 10,
-      isValidEmail(values.email),
-      Boolean(values.project_type),
-      Boolean(values.stone_type),
-    ];
-    return Math.round((required.filter(Boolean).length / required.length) * 100);
-  }, [values]);
+  useEffect(() => {
+    const ref = step === 1 ? step1Ref.current : step2Ref.current;
+    if (!ref) return;
+    const fields = Array.from(ref.children);
+    gsap.fromTo(
+      fields,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.06, duration: 0.4, ease: 'power2.out', delay: 0.1 }
+    );
+  }, [step]);
 
   const updateValue = (field: keyof FormValues, value: string) => {
     const nextValue = field === 'phone' ? formatPhone(value) : value;
@@ -82,24 +86,39 @@ export default function LeadForm() {
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  const validate = (vals: FormValues): FieldErrors => {
+  const validateStep1 = (): FieldErrors => {
     const errors: FieldErrors = {};
-    if (vals.name.trim().length < 2) errors.name = t('form.err_name');
-    if (phoneDigits(vals.phone).length !== 10) errors.phone = t('form.err_phone');
-    if (!isValidEmail(vals.email)) errors.email = t('form.err_email');
-    if (!vals.project_type) errors.project_type = t('form.err_project');
-    if (!vals.stone_type) errors.stone_type = t('form.err_stone');
+    if (values.name.trim().length < 2) errors.name = t('form.err_name');
+    if (phoneDigits(values.phone).length !== 10) errors.phone = t('form.err_phone');
+    if (!values.project_type) errors.project_type = t('form.err_project');
     return errors;
+  };
+
+  const validateStep2 = (): FieldErrors => {
+    const errors: FieldErrors = {};
+    if (!isValidEmail(values.email)) errors.email = t('form.err_email');
+    if (!values.stone_type) errors.stone_type = t('form.err_stone');
+    return errors;
+  };
+
+  const handleNext = () => {
+    setError('');
+    const errors = validateStep1();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setError(t('form.err_review'));
+      return;
+    }
+    setStep(2);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
-    const validationErrors = validate(values);
-    setFieldErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
+    const errors = validateStep2();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
       setError(t('form.err_review'));
       return;
     }
@@ -132,18 +151,12 @@ export default function LeadForm() {
     const { error: whatsappError } = await supabase.functions.invoke('send-whatsapp-notification', {
       body: { lead: payload },
     });
-
-    if (whatsappError) {
-      console.warn('WhatsApp notification failed:', whatsappError.message);
-    }
+    if (whatsappError) console.warn('WhatsApp notification failed:', whatsappError.message);
 
     const { error: emailError } = await supabase.functions.invoke('send-email-notification', {
       body: { lead: payload },
     });
-
-    if (emailError) {
-      console.warn('Email notification failed:', emailError.message);
-    }
+    if (emailError) console.warn('Email notification failed:', emailError.message);
 
     setSubmittedName(payload.name);
     setSubmitted(true);
@@ -174,7 +187,6 @@ export default function LeadForm() {
           <p className="text-[#5F5F5F] font-sans text-sm leading-relaxed mb-6">
             {t('form.success_desc')}
           </p>
-
           <div className="grid grid-cols-1 gap-3 text-left">
             <div className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3">
               <Clock size={17} className="text-[#B91C1C]" />
@@ -204,211 +216,254 @@ export default function LeadForm() {
       transition={{ duration: 0.7, delay: 0.4 }}
       className="bg-white rounded-lg shadow-2xl p-7 lg:p-8 w-full max-w-[480px] mx-auto lg:mx-0 border border-[#E5E7EB]"
     >
-      <div className="mb-5">
+      {/* Header */}
+      <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
           <div className="h-px flex-1 bg-[#B91C1C]/30" />
-          <span className="text-[#B91C1C] text-[10px] tracking-[0.2em] font-sans font-medium uppercase">{t('form.label')}</span>
+          <span className="text-[#B91C1C] text-[10px] tracking-[0.2em] font-sans font-medium uppercase">
+            {t('form.label')}
+          </span>
           <div className="h-px flex-1 bg-[#B91C1C]/30" />
         </div>
         <h2 className="font-serif text-xl text-[#171717] text-center mt-2">{t('form.heading')}</h2>
 
-        <div className="mt-5">
-          <div className="mb-2 flex items-center justify-between text-[11px] font-sans text-[#737373]">
-            <span>{t('form.progress')}</span>
-            <span className="font-semibold text-[#B91C1C]">{progress}%</span>
+        {/* Step indicator */}
+        <div className="mt-5 flex items-center gap-3">
+          <div className="flex-1 flex items-center gap-2">
+            <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold font-sans transition-colors duration-300 ${step >= 1 ? 'bg-[#B91C1C] text-white' : 'bg-[#F1F5F9] text-[#737373]'}`}>
+              {step > 1 ? <CheckCircle size={14} /> : '1'}
+            </div>
+            <div className={`flex-1 h-1 rounded-full transition-colors duration-500 ${step > 1 ? 'bg-[#B91C1C]' : 'bg-[#F1F5F9]'}`} />
+            <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold font-sans transition-colors duration-300 ${step >= 2 ? 'bg-[#B91C1C] text-white' : 'bg-[#F1F5F9] text-[#737373]'}`}>
+              2
+            </div>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[#F1F5F9]">
-            <motion.div
-              className="h-full rounded-full bg-[#B91C1C]"
-              initial={false}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.25 }}
-            />
-          </div>
+          <span className="text-[11px] font-sans text-[#737373] whitespace-nowrap">
+            Step {step} of 2
+          </span>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <input
-              required
-              name="name"
-              type="text"
-              placeholder={t('form.name')}
-              className={`${inputClass} ${fieldErrors.name ? 'border-[#B91C1C]' : ''}`}
-              value={values.name}
-              onChange={(e) => updateValue('name', e.target.value)}
-              aria-invalid={Boolean(fieldErrors.name)}
-            />
-            {fieldErrors.name && <p className={fieldErrorClass}>{fieldErrors.name}</p>}
-          </div>
-          <div>
-            <input
-              required
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              placeholder={t('form.phone')}
-              className={`${inputClass} ${fieldErrors.phone ? 'border-[#B91C1C]' : ''}`}
-              value={values.phone}
-              onChange={(e) => updateValue('phone', e.target.value)}
-              aria-invalid={Boolean(fieldErrors.phone)}
-            />
-            {fieldErrors.phone && <p className={fieldErrorClass}>{fieldErrors.phone}</p>}
-          </div>
-        </div>
+      <AnimatePresence mode="wait">
+        {step === 1 ? (
+          <motion.div
+            key="step1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div ref={step1Ref} className="flex flex-col gap-3">
+              <div>
+                <input
+                  required
+                  name="name"
+                  type="text"
+                  placeholder={t('form.name')}
+                  className={`${inputClass} ${fieldErrors.name ? 'border-[#B91C1C]' : ''}`}
+                  value={values.name}
+                  onChange={(e) => updateValue('name', e.target.value)}
+                  autoFocus
+                />
+                {fieldErrors.name && <p className={fieldErrorClass}>{fieldErrors.name}</p>}
+              </div>
 
-        <div>
-          <input
-            required
-            name="email"
-            type="email"
-            placeholder={t('form.email')}
-            className={`${inputClass} ${fieldErrors.email ? 'border-[#B91C1C]' : ''}`}
-            value={values.email}
-            onChange={(e) => updateValue('email', e.target.value)}
-            aria-invalid={Boolean(fieldErrors.email)}
-          />
-          {fieldErrors.email && <p className={fieldErrorClass}>{fieldErrors.email}</p>}
-        </div>
+              <div>
+                <input
+                  required
+                  name="phone"
+                  type="tel"
+                  inputMode="tel"
+                  placeholder={t('form.phone')}
+                  className={`${inputClass} ${fieldErrors.phone ? 'border-[#B91C1C]' : ''}`}
+                  value={values.phone}
+                  onChange={(e) => updateValue('phone', e.target.value)}
+                />
+                {fieldErrors.phone && <p className={fieldErrorClass}>{fieldErrors.phone}</p>}
+              </div>
 
-        <input
-          name="address"
-          type="text"
-          placeholder={t('form.address')}
-          className={inputClass}
-          value={values.address}
-          onChange={(e) => updateValue('address', e.target.value)}
-        />
+              <div>
+                <div className="relative">
+                  <select
+                    required
+                    name="project_type"
+                    className={`${selectClass} ${fieldErrors.project_type ? 'border-[#B91C1C]' : ''}`}
+                    value={values.project_type}
+                    onChange={(e) => updateValue('project_type', e.target.value)}
+                  >
+                    <option value="" disabled>{t('form.project_type')}</option>
+                    <option value="Kitchen Countertop">{t('form.kitchen')}</option>
+                    <option value="Bathroom Vanity">{t('form.bathroom')}</option>
+                    <option value="Outdoor Kitchen">{t('form.outdoor_kitchen')}</option>
+                    <option value="Fireplace or Firepit">{t('form.fireplace')}</option>
+                    <option value="Remnant Countertop">{t('form.remnant')}</option>
+                  </select>
+                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">▾</div>
+                </div>
+                {fieldErrors.project_type && <p className={fieldErrorClass}>{fieldErrors.project_type}</p>}
+              </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <div className="relative">
-              <select
-                required
-                name="project_type"
-                className={`${selectClass} ${fieldErrors.project_type ? 'border-[#B91C1C]' : ''}`}
-                value={values.project_type}
-                onChange={(e) => updateValue('project_type', e.target.value)}
-                aria-invalid={Boolean(fieldErrors.project_type)}
+              {error && (
+                <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-xs font-sans text-[#B91C1C]">
+                  {error}
+                </p>
+              )}
+
+              <motion.button
+                type="button"
+                onClick={handleNext}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className="w-full bg-[#B91C1C] hover:bg-[#7F1D1D] text-white font-sans font-semibold text-sm tracking-widest py-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mt-1"
               >
-                <option value="" disabled>{t('form.project_type')}</option>
-                <option value="Kitchen Countertop">{t('form.kitchen')}</option>
-                <option value="Bathroom Vanity">{t('form.bathroom')}</option>
-                <option value="Outdoor Kitchen">{t('form.outdoor_kitchen')}</option>
-                <option value="Fireplace or Firepit">{t('form.fireplace')}</option>
-                <option value="Remnant Countertop">{t('form.remnant')}</option>
-              </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
+                {t('form.next') || 'Continue'}
+                <ArrowRight size={15} />
+              </motion.button>
+
+              <div className="flex items-center justify-center gap-1 text-[11px] text-[#737373] font-sans">
+                <CheckCircle size={11} className="text-[#B91C1C]" />
+                {t('form.free_estimates')}
+              </div>
             </div>
-            {fieldErrors.project_type && <p className={fieldErrorClass}>{fieldErrors.project_type}</p>}
-          </div>
-          <div>
-            <div className="relative">
-              <select
-                required
-                name="stone_type"
-                className={`${selectClass} ${fieldErrors.stone_type ? 'border-[#B91C1C]' : ''}`}
-                value={values.stone_type}
-                onChange={(e) => updateValue('stone_type', e.target.value)}
-                aria-invalid={Boolean(fieldErrors.stone_type)}
+          </motion.div>
+        ) : (
+          <motion.form
+            key="step2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.25 }}
+            onSubmit={handleSubmit}
+            noValidate
+          >
+            <div ref={step2Ref} className="flex flex-col gap-3">
+              <div>
+                <input
+                  required
+                  name="email"
+                  type="email"
+                  placeholder={t('form.email')}
+                  className={`${inputClass} ${fieldErrors.email ? 'border-[#B91C1C]' : ''}`}
+                  value={values.email}
+                  onChange={(e) => updateValue('email', e.target.value)}
+                  autoFocus
+                />
+                {fieldErrors.email && <p className={fieldErrorClass}>{fieldErrors.email}</p>}
+              </div>
+
+              <input
+                name="address"
+                type="text"
+                placeholder={t('form.address')}
+                className={inputClass}
+                value={values.address}
+                onChange={(e) => updateValue('address', e.target.value)}
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <div className="relative">
+                    <select
+                      required
+                      name="stone_type"
+                      className={`${selectClass} ${fieldErrors.stone_type ? 'border-[#B91C1C]' : ''}`}
+                      value={values.stone_type}
+                      onChange={(e) => updateValue('stone_type', e.target.value)}
+                    >
+                      <option value="" disabled>{t('form.stone_type')}</option>
+                      <option value="Granite">{t('form.granite')}</option>
+                      <option value="Quartz">{t('form.quartz')}</option>
+                      <option value="Marble">{t('form.marble')}</option>
+                      <option value="Quartzite">{t('form.quartzite')}</option>
+                      <option value="Porcelain">{t('form.porcelain')}</option>
+                      <option value="Not Sure Yet">{t('form.not_sure')}</option>
+                    </select>
+                    <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">▾</div>
+                  </div>
+                  {fieldErrors.stone_type && <p className={fieldErrorClass}>{fieldErrors.stone_type}</p>}
+                </div>
+                <div className="relative">
+                  <select
+                    name="timeline"
+                    className={selectClass}
+                    value={values.timeline}
+                    onChange={(e) => updateValue('timeline', e.target.value)}
+                  >
+                    <option value="" disabled>{t('form.timeline')}</option>
+                    <option value="ASAP">{t('form.asap')}</option>
+                    <option value="Within 30 Days">{t('form.within_30')}</option>
+                    <option value="1-3 Months">{t('form.months_1_3')}</option>
+                  </select>
+                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">▾</div>
+                </div>
+              </div>
+
+              <input
+                name="measurements"
+                type="text"
+                placeholder={t('form.measurements')}
+                className={inputClass}
+                value={values.measurements}
+                onChange={(e) => updateValue('measurements', e.target.value)}
+              />
+
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="w-full border-2 border-dashed border-[#E5E7EB] hover:border-[#B91C1C] rounded-lg px-4 py-3 text-sm font-sans text-[#737373] hover:text-[#B91C1C] flex items-center justify-center gap-2 transition-all duration-200"
               >
-                <option value="" disabled>{t('form.stone_type')}</option>
-                <option value="Granite">{t('form.granite')}</option>
-                <option value="Quartz">{t('form.quartz')}</option>
-                <option value="Marble">{t('form.marble')}</option>
-                <option value="Quartzite">{t('form.quartzite')}</option>
-                <option value="Porcelain">{t('form.porcelain')}</option>
-                <option value="Not Sure Yet">{t('form.not_sure')}</option>
-              </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
+                <Upload size={15} />
+                {fileName || t('form.upload')}
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setSelectedFiles(files);
+                  setFileName(files.length > 1 ? `${files.length} files selected` : files[0]?.name || '');
+                }}
+              />
+
+              <textarea
+                name="comments"
+                rows={2}
+                placeholder={t('form.comments')}
+                className={`${inputClass} resize-none`}
+                value={values.comments}
+                onChange={(e) => updateValue('comments', e.target.value)}
+              />
+
+              {error && (
+                <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-xs font-sans text-[#B91C1C]">
+                  {error}
+                </p>
+              )}
+
+              <motion.button
+                type="submit"
+                disabled={submitting}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className="w-full bg-[#171717] hover:bg-[#B91C1C] disabled:bg-[#737373] disabled:cursor-not-allowed text-white font-sans font-semibold text-sm tracking-widest py-4 rounded-lg transition-all duration-300 mt-1"
+              >
+                {submitting ? t('form.sending') : t('form.submit')}
+              </motion.button>
+
+              <button
+                type="button"
+                onClick={() => { setStep(1); setError(''); setFieldErrors({}); }}
+                className="flex items-center justify-center gap-1 text-[11px] text-[#737373] hover:text-[#B91C1C] font-sans transition-colors"
+              >
+                <ArrowLeft size={11} /> {t('form.back') || 'Back'}
+              </button>
             </div>
-            {fieldErrors.stone_type && <p className={fieldErrorClass}>{fieldErrors.stone_type}</p>}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <input
-            name="measurements"
-            type="text"
-            placeholder={t('form.measurements')}
-            className={inputClass}
-            value={values.measurements}
-            onChange={(e) => updateValue('measurements', e.target.value)}
-          />
-          <div className="relative">
-            <select
-              name="timeline"
-              className={selectClass}
-              value={values.timeline}
-              onChange={(e) => updateValue('timeline', e.target.value)}
-            >
-              <option value="" disabled>{t('form.timeline')}</option>
-              <option value="ASAP">{t('form.asap')}</option>
-              <option value="Within 30 Days">{t('form.within_30')}</option>
-              <option value="1-3 Months">{t('form.months_1_3')}</option>
-              <option value="Just Researching">{t('form.researching')}</option>
-            </select>
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#737373]">v</div>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="w-full border-2 border-dashed border-[#E5E7EB] hover:border-[#B91C1C] rounded-lg px-4 py-3 text-sm font-sans text-[#737373] hover:text-[#B91C1C] flex items-center justify-center gap-2 transition-all duration-200"
-        >
-          <Upload size={15} />
-          {fileName || t('form.upload')}
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []);
-            setSelectedFiles(files);
-            setFileName(files.length > 1 ? `${files.length} files selected` : files[0]?.name || '');
-          }}
-        />
-
-        <textarea
-          name="comments"
-          rows={3}
-          placeholder={t('form.comments')}
-          className={`${inputClass} resize-none`}
-          value={values.comments}
-          onChange={(e) => updateValue('comments', e.target.value)}
-        />
-
-        {error && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-xs font-sans text-[#B91C1C]">
-            {error}
-          </p>
+          </motion.form>
         )}
-
-        <motion.button
-          type="submit"
-          disabled={submitting}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          className="w-full bg-[#171717] hover:bg-[#B91C1C] disabled:bg-[#737373] disabled:cursor-not-allowed text-white font-sans font-semibold text-sm tracking-widest py-4 rounded-lg transition-all duration-300 mt-1"
-        >
-          {submitting ? t('form.sending') : t('form.submit')}
-        </motion.button>
-
-        <div className="grid grid-cols-2 gap-2 text-[11px] text-[#737373] font-sans">
-          <span className="inline-flex items-center justify-center gap-1 rounded-lg bg-[#FAFAFA] px-2 py-2">
-            <CheckCircle size={12} className="text-[#B91C1C]" /> {t('form.free_estimates')}
-          </span>
-          <a href="tel:7744332580" className="inline-flex items-center justify-center gap-1 rounded-lg bg-[#FAFAFA] px-2 py-2 hover:text-[#B91C1C] transition">
-            <Mail size={12} className="text-[#B91C1C]" /> (774) 433-2580
-          </a>
-        </div>
-      </form>
+      </AnimatePresence>
     </motion.div>
   );
 }
