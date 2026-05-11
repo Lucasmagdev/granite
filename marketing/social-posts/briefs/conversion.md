@@ -23,7 +23,7 @@ You come in, you see what we have, you touch the slabs, and you decide.
 
 20 years in Massachusetts. Showroom at 10 Mill St, Bellingham. Call to schedule or just walk in.
 
-☎️ (774) 433-2580
+☎️ (774) 498-9863
 
 **Hashtags:**
 #FreeEstimate #GraniteCountertops #KitchenRemodel #BellinghamMA #MassachusettsContractor #CountertopQuote #HomeRenovation
@@ -51,7 +51,7 @@ You come in, you see what we have, you touch the slabs, and you decide.
 
 **Story Frame 3:**
 > CALL BEFORE THEY'RE GONE.
-> (774) 433-2580
+> (774) 498-9863
 > 📍 10 Mill St, Bellingham MA
 
 **Caption (for feed post):**
@@ -61,7 +61,7 @@ These are leftover pieces from larger jobs — same quality, smaller size, sold 
 
 We have inventory in stock right now. These go fast — call or DM before they're gone.
 
-☎️ (774) 433-2580 | 📍 Bellingham MA
+☎️ (774) 498-9863 | 📍 Bellingham MA
 
 **Hashtags:**
 #RemnantStone #GraniteRemnants #BudgetReno #CountertopSale #QuartzRemnants #BellinghamMA #HomeImprovement
@@ -85,7 +85,7 @@ Once the schedule fills, wait times go up. If you've been thinking about it — 
 
 Free estimate. We measure, we fabricate, we install. All in-house.
 
-☎️ (774) 433-2580 | 📍 10 Mill St, Bellingham MA
+☎️ (774) 498-9863 | 📍 10 Mill St, Bellingham MA
 
 **Hashtags:**
 #KitchenRemodel #GraniteCountertops #BellinghamMA #HomeRenovation #CountertopEstimate #MassachusettsContractor #SpringRemodel
@@ -117,7 +117,7 @@ Color changes under different lighting. Veining looks different at arm's length 
 
 Come to the showroom. We'll pull slabs that match your cabinets and let you see everything together. No pressure, no time limit.
 
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #GraniteShowroom #CountertopShowroom #BellinghamMA #StoneSelection #KitchenRemodel #GraniteCountertops #MassachusettsHomes
@@ -154,7 +154,7 @@ DM us your dimensions, the stone you're thinking about, and any reference photos
 
 No commitment. No follow-up spam. Just a real answer from people who've done this for 20 years.
 
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #CountertopQuote #GraniteCountertops #KitchenRemodel #BellinghamMA #FreeEstimate #QuartzCountertops #HomeRenovation
@@ -180,7 +180,7 @@ No commitment. No follow-up spam. Just a real answer from people who've done thi
 
 **Slide 3 — CTA:**
 > CALL TO SET UP A TRADE ACCOUNT.
-> (774) 433-2580
+> (774) 498-9863
 > 📍 10 Mill St, Bellingham MA
 
 **Caption:**
@@ -190,7 +190,7 @@ We fabricate and install in-house. We've been doing it for 20+ years. We underst
 
 Call us to set up a trade account.
 
-☎️ (774) 433-2580 | 📍 Bellingham MA
+☎️ (774) 498-9863 | 📍 Bellingham MA
 
 **Hashtags:**
 #ContractorsOfInstagram #GeneralContractor #HomeBuilder #GraniteSupplier #KitchenContractor #MassachusettsContractor #BellinghamMA #TradeAccount

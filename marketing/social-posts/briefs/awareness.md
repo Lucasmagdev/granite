@@ -42,7 +42,7 @@ Hook before education. Pain before solution.
 > COME SEE BOTH.
 > Showroom open at 10 Mill St, Bellingham MA.
 > Free estimate. No pressure.
-> Call (774) 433-2580.
+> Call (774) 498-9863.
 
 **Caption:**
 Granite vs. quartz is the most Googled countertop question — and most of the answers online are written by people trying to sell you one or the other.
@@ -52,7 +52,7 @@ Here's the honest breakdown: both are great. The wrong choice happens when you p
 Come see the slabs in person. We've been doing this for 20 years. We'll tell you what actually holds up.
 
 Free estimate → link in bio.
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #GraniteCountertops #QuartzCountertops #KitchenRemodel #CountertopIdeas #BellinghamMA #MassachusettsHomes #KitchenDesign #GraniteVsQuartz #StoneCountertops
@@ -91,7 +91,7 @@ Free estimate → link in bio.
 > WE'LL SHOW YOU WHAT WORKS
 > FOR YOUR SPECIFIC KITCHEN.
 > Free estimate. No obligation.
-> (774) 433-2580
+> (774) 498-9863
 
 **Caption:**
 The biggest countertop mistake isn't picking the wrong material.
@@ -104,7 +104,7 @@ We help homeowners get this right before they commit. Come to the showroom, brin
 
 Free estimate. No pressure. 20 years of doing this.
 
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #KitchenDesign #CountertopIdeas #KitchenRemodel #GraniteCountertops #HomeRenovation #KitchenInspiration #InteriorDesign #MassachusettsContractor
@@ -141,7 +141,7 @@ Free estimate. No pressure. 20 years of doing this.
 > QUARTZITE LOOKS LIKE MARBLE.
 > PERFORMS LIKE GRANITE.
 > Come see the difference at our showroom.
-> 10 Mill St, Bellingham MA | (774) 433-2580
+> 10 Mill St, Bellingham MA | (774) 498-9863
 
 **Caption:**
 Marble countertops are one of the most asked-about materials we get at the showroom. And every time, we say the same thing: let us show you what marble actually looks like after 6 months in a real kitchen.
@@ -152,7 +152,7 @@ If you want the look without the maintenance — quartzite is the move. Natural 
 
 Come in and we'll show you both side by side. Free estimate, no commitment.
 
-📍 Bellingham, MA | ☎️ (774) 433-2580
+📍 Bellingham, MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #MarbleCountertops #QuartziteCountertops #KitchenRemodel #NaturalStone #CountertopAdvice #HomeRenovation #BellinghamMA
@@ -180,7 +180,7 @@ We have stones at every price point — including remnants that are premium mate
 
 Come see what's in stock.
 
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 Free estimate → link in bio.
 
 **Hashtags:**
@@ -207,7 +207,7 @@ You don't have to remodel the whole kitchen. A countertop swap before listing ca
 
 We do free estimates. We've been doing this 20+ years in Massachusetts. Call before your listing goes live.
 
-☎️ (774) 433-2580 | 📍 10 Mill St, Bellingham MA
+☎️ (774) 498-9863 | 📍 10 Mill St, Bellingham MA
 
 **Hashtags:**
 #HomeResaleValue #KitchenRemodel #GraniteCountertops #MassachusettsRealEstate #HomeImprovement #SellingYourHome #CountertopUpgrade

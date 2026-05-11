@@ -48,7 +48,7 @@ Abrir [TRACKER.md](TRACKER.md)
 
 | Info | Dado |
 |---|---|
-| Telefone | (774) 433-2580 |
+| Telefone | (774) 498-9863 |
 | Endereço | 10 Mill St, Bellingham MA |
 | Cor primária | `#9B1515` (vermelho escuro) |
 | Fonte headline | Bebas Neue |

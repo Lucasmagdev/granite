@@ -46,7 +46,7 @@ Saves + shares = algorithm fuel.
 
 **CTA Slide:**
 > READY?
-> Call (774) 433-2580 or visit our showroom.
+> Call (774) 498-9863 or visit our showroom.
 > 10 Mill St, Bellingham MA.
 > Free estimate. No pressure.
 
@@ -57,7 +57,7 @@ Save this post. Screenshot it before you call us.
 
 Free estimate, no commitment. 20 years in Massachusetts.
 
-📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #CountertopEstimate #KitchenRemodel #GraniteCountertops #HomeRenovation #BellinghamMA #CountertopTips #KitchenDesign
@@ -97,7 +97,7 @@ Free estimate, no commitment. 20 years in Massachusetts.
 > WE CARRY BOTH.
 > AND WE'LL TELL YOU EXACTLY WHAT YOU'RE GETTING.
 > Come to the showroom.
-> 10 Mill St, Bellingham MA | (774) 433-2580
+> 10 Mill St, Bellingham MA | (774) 498-9863
 
 **Caption:**
 This is the most common confusion we see in the stone industry — and it costs homeowners real money.
@@ -140,7 +140,7 @@ Free estimate → link in bio.
 **Slide 4 — CTA:**
 > WE HAVE REMNANTS IN STOCK NOW.
 > They sell fast. Call before they're gone.
-> (774) 433-2580
+> (774) 498-9863
 > 📍 10 Mill St, Bellingham MA
 
 **Caption:**
@@ -152,7 +152,7 @@ We have remnants in granite, quartz, quartzite, and marble — in stock right no
 
 They sell fast. Call or DM before they're gone.
 
-☎️ (774) 433-2580 | 📍 Bellingham MA
+☎️ (774) 498-9863 | 📍 Bellingham MA
 
 **Hashtags:**
 #RemnantStone #BathroomRemodel #GraniteRemnants #BudgetRenovation #VanityCountertop #HomeImprovement #BellinghamMA #MassachusettsContractor
@@ -202,7 +202,7 @@ They sell fast. Call or DM before they're gone.
 **Slide 7 — CTA:**
 > WE FABRICATE ALL PROFILES IN-HOUSE.
 > Come see samples at the showroom.
-> 10 Mill St, Bellingham MA | (774) 433-2580
+> 10 Mill St, Bellingham MA | (774) 498-9863
 > Free estimate.
 
 **Caption:**
@@ -212,7 +212,7 @@ The edge profile changes the entire feel of the counter. Eased = modern. Ogee = 
 
 Save this post. When you come in for your estimate, you'll know exactly what to ask for.
 
-📍 Bellingham, MA | ☎️ (774) 433-2580
+📍 Bellingham, MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #EdgeProfile #GraniteCountertops #CountertopDesign #KitchenDesign #StoneCountertops #CountertopEdge #KitchenRemodel
@@ -257,7 +257,7 @@ Save this post. When you come in for your estimate, you'll know exactly what to 
 > WE FABRICATE AND INSTALL IN-HOUSE.
 > 20 years in Massachusetts.
 > Free estimate, no commitment.
-> (774) 433-2580 | 10 Mill St, Bellingham MA
+> (774) 498-9863 | 10 Mill St, Bellingham MA
 
 **Caption:**
 The most expensive remodel mistakes aren't material choices — they're sequencing mistakes.

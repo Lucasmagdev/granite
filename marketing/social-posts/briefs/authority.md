@@ -42,7 +42,7 @@ Goal: build credibility without bragging. Show, don't tell.
 > 20 YEARS. THOUSANDS OF KITCHENS.
 > SAME LOCATION. SAME TEAM.
 > Come in and let us put that experience to work.
-> 10 Mill St, Bellingham MA | (774) 433-2580
+> 10 Mill St, Bellingham MA | (774) 498-9863
 
 **Caption:**
 Twenty years of countertop installations teaches you things no catalog will tell you.
@@ -51,7 +51,7 @@ We've seen every mistake — and made a few ourselves early on. These are the re
 
 Come talk to people who've done this longer than most kitchen showrooms have existed.
 
-Free estimate. 📍 10 Mill St, Bellingham MA | ☎️ (774) 433-2580
+Free estimate. 📍 10 Mill St, Bellingham MA | ☎️ (774) 498-9863
 
 **Hashtags:**
 #GraniteContractor #CountertopExperts #20YearsExperience #KitchenRemodel #BellinghamMA #MassachusettsContractor #StoneCountertops
@@ -108,7 +108,7 @@ This is what one change does to a kitchen.
 Stone: [material + color name if available]
 Install time: [X days from measurement to install]
 
-Free estimate → (774) 433-2580 | 📍 Bellingham MA
+Free estimate → (774) 498-9863 | 📍 Bellingham MA
 
 *[Note to team: fill in real project details — client city, material, timeframe. No names needed. Ask client permission for photo use.]*
 
@@ -147,7 +147,7 @@ That's the business we've built over 20 years. That's why we have contractors wh
 
 If you're a builder looking for a stone supplier — call us.
 
-☎️ (774) 433-2580 | 📍 10 Mill St, Bellingham MA
+☎️ (774) 498-9863 | 📍 10 Mill St, Bellingham MA
 
 **Hashtags:**
 #ContractorSupplier #GraniteSupplier #MassachusettsContractor #HomeBuilder #KitchenContractor #BellinghamMA #StoneCountertops
@@ -182,7 +182,7 @@ If you're a builder looking for a stone supplier — call us.
 > STEP 4: QUOTE + INSTALL DATE
 > You get a real number and a real timeline.
 > No surprises. No hidden fees.
-> (774) 433-2580 | 10 Mill St, Bellingham MA
+> (774) 498-9863 | 10 Mill St, Bellingham MA
 
 **Caption:**
 We hear this all the time: "I didn't call because I didn't know what to expect."
@@ -191,7 +191,7 @@ Here's exactly what happens when you reach out. No surprises. No pressure. Just 
 
 The call takes 10 minutes. The countertop lasts decades.
 
-Free estimate → (774) 433-2580
+Free estimate → (774) 498-9863
 
 **Hashtags:**
 #CountertopProcess #GraniteEstimate #KitchenRemodel #BellinghamMA #HowItWorks #FreeEstimate #MassachusettsContractor
@@ -224,7 +224,7 @@ Free estimate → (774) 433-2580
 **Slide 4 — CTA:**
 > FREE ESTIMATE FOR OUTDOOR PROJECTS.
 > Same quality. Same team. Different view.
-> (774) 433-2580 | 📍 Bellingham MA
+> (774) 498-9863 | 📍 Bellingham MA
 
 **Caption:**
 Most people think we only do kitchens. We do a lot more.
@@ -233,7 +233,7 @@ Outdoor kitchens, fireplaces, firepits, outdoor bars — all with the same natur
 
 Come in or call. Free estimate, same process.
 
-☎️ (774) 433-2580 | 📍 10 Mill St, Bellingham MA
+☎️ (774) 498-9863 | 📍 10 Mill St, Bellingham MA
 
 **Hashtags:**
 #OutdoorKitchen #FireplaceDesign #OutdoorFireplace #GraniteFireplace #NaturalStone #BellinghamMA #OutdoorLiving #MassachusettsContractor

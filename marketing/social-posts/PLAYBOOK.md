@@ -86,7 +86,7 @@
 
 ## CTA Templates
 
-- "Free estimate — call (774) 433-2580"
+- "Free estimate — call (774) 498-9863"
 - "Visit our showroom at 10 Mill St, Bellingham MA"
 - "DM us your countertop dimensions"
 - "Link in bio to schedule"
