@@ -41,7 +41,7 @@ const env = readEnvFile('.env');
 const lead = {
   created_at: new Date().toISOString(),
   name: 'Teste Codex SMTP',
-  phone: '(774) 433-2580',
+  phone: '(774) 498-9863',
   email: 'lucascodexy@gmail.com',
   address: 'Bellingham, MA',
   project_type: 'Countertops',

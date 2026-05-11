@@ -26,7 +26,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const payload = {
   name: 'Teste Formulario VPS',
-  phone: '(774) 433-2580',
+  phone: '(774) 498-9863',
   email: 'teste-formulario@example.com',
   address: 'Bellingham, MA',
   project_type: 'Kitchen Countertop',

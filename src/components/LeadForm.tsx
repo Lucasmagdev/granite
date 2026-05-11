@@ -195,11 +195,11 @@ export default function LeadForm() {
                 <p className="text-xs text-[#737373]">{t('form.hours_detail')}</p>
               </div>
             </div>
-            <a href="tel:7744332580" className="flex items-center gap-3 rounded-lg border border-[#B91C1C]/25 bg-[#B91C1C]/5 px-4 py-3 hover:bg-[#B91C1C]/10 transition">
+            <a href="tel:7744989863" className="flex items-center gap-3 rounded-lg border border-[#B91C1C]/25 bg-[#B91C1C]/5 px-4 py-3 hover:bg-[#B91C1C]/10 transition">
               <Phone size={17} className="text-[#B91C1C]" />
               <div>
                 <p className="text-sm font-semibold text-[#171717]">{t('form.faster_help')}</p>
-                <p className="text-xs text-[#B91C1C]">(774) 433-2580</p>
+                <p className="text-xs text-[#B91C1C]">(774) 498-9863</p>
               </div>
               <ArrowRight size={15} className="ml-auto text-[#B91C1C]" />
             </a>

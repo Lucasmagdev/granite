@@ -162,11 +162,11 @@ export default function Hero() {
               </MagneticButton>
 
               <MagneticAnchor
-                href="tel:+17744332580"
+                href="tel:+17744989863"
                 className="flex items-center gap-2 border border-white/30 hover:border-white text-white font-sans font-medium text-sm px-7 py-4 rounded transition-colors duration-200"
               >
                 <Phone size={15} />
-                (774) 433-2580
+                (774) 498-9863
               </MagneticAnchor>
             </motion.div>
 

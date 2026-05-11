@@ -94,7 +94,7 @@ function customerHtml(lead: EstimateLead) {
             Thank you for contacting St. Joseph Granite. We received your estimate request and our team will review your project details soon.
           </p>
           <p style="font-size:15px;line-height:1.7;margin:0 0 20px;">
-            If you need faster assistance, call us at <strong>(774) 433-2580</strong>.
+            If you need faster assistance, call us at <strong>(774) 498-9863</strong>.
           </p>
           <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
             <p style="margin:0 0 8px;color:#737373;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Your Request</p>

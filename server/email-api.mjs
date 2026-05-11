@@ -100,7 +100,7 @@ function customerHtml(lead) {
             Thank you for contacting St. Joseph Granite. We received your estimate request and our team will review your project details soon.
           </p>
           <p style="font-size:15px;line-height:1.7;margin:0 0 20px;">
-            If you need faster assistance, call us at <strong>(774) 433-2580</strong>.
+            If you need faster assistance, call us at <strong>(774) 498-9863</strong>.
           </p>
           <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
             <p style="margin:0 0 8px;color:#737373;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Your Request</p>
@@ -165,7 +165,7 @@ function completionHtml(lead) {
           </div>
           <div style="border-top:1px solid #e5e7eb;padding-top:20px;">
             <p style="margin:0 0 6px;font-size:13px;color:#737373;">Questions? Contact us anytime:</p>
-            <p style="margin:0;font-size:15px;color:#171717;font-weight:600;">📞 (774) 433-2580</p>
+            <p style="margin:0;font-size:15px;color:#171717;font-weight:600;">📞 (774) 498-9863</p>
           </div>
         </div>
         <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 24px;text-align:center;">
@@ -188,7 +188,7 @@ function customHtml(lead, subject, message) {
           <p style="font-size:15px;line-height:1.8;margin:0;white-space:pre-line;">${escapeHtml(message)}</p>
         </div>
         <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 24px;text-align:center;">
-          <p style="margin:0;font-size:12px;color:#9ca3af;">St. Joseph Granite · (774) 433-2580</p>
+          <p style="margin:0;font-size:12px;color:#9ca3af;">St. Joseph Granite · (774) 498-9863</p>
         </div>
       </div>
     </div>
@@ -217,7 +217,7 @@ async function sendLeadEmail(lead, type = 'lead', extra = {}) {
       to: lead.email,
       subject: `Your project is complete! — St. Joseph Granite`,
       html: completionHtml(lead),
-      text: `Hi ${lead.name || 'there'}, your ${lead.project_type} project with St. Joseph Granite is complete! Thank you for choosing us. (774) 433-2580`,
+      text: `Hi ${lead.name || 'there'}, your ${lead.project_type} project with St. Joseph Granite is complete! Thank you for choosing us. (774) 498-9863`,
     });
     return [{ messageId: result.messageId, accepted: result.accepted }];
   }

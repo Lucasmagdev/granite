@@ -32,14 +32,14 @@ export default function MobileSticky() {
         >
           <div className="bg-[#B91C1C] border-t border-white/20 px-4 py-3 flex gap-3 safe-bottom">
             <a
-              href="tel:+17744332580"
+              href="tel:+17744989863"
               className="flex-1 flex flex-col items-center justify-center border border-white/25 text-white py-2.5 rounded-lg"
             >
               <div className="flex items-center gap-1.5">
                 <Phone size={13} />
                 <span className="text-xs font-sans font-medium">{t('mobile.call')}</span>
               </div>
-              <span className="text-[10px] font-sans text-white/75 mt-0.5">(774) 433-2580</span>
+              <span className="text-[10px] font-sans text-white/75 mt-0.5">(774) 498-9863</span>
             </a>
             <button
               onClick={scrollToForm}

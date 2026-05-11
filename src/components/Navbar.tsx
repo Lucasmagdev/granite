@@ -66,11 +66,11 @@ export default function Navbar() {
 
           <div className="hidden lg:flex items-center gap-4">
             <a
-              href="tel:+17744332580"
+              href="tel:+17744989863"
               className="flex items-center gap-2 text-[#52525B] hover:text-[#B91C1C] text-sm font-sans transition-colors duration-200"
             >
               <Phone size={14} />
-              (774) 433-2580
+              (774) 498-9863
             </a>
             <MagneticButton
               onClick={() => scrollTo('contact')}
@@ -112,11 +112,11 @@ export default function Navbar() {
             </nav>
             <div className="mt-10 flex flex-col gap-4">
               <a
-                href="tel:+17744332580"
+                href="tel:+17744989863"
                 className="flex items-center justify-center gap-2 border border-white/20 text-white py-3 rounded text-base font-sans"
               >
                 <Phone size={16} />
-                (774) 433-2580
+                (774) 498-9863
               </a>
               <button
                 onClick={() => scrollTo('contact')}

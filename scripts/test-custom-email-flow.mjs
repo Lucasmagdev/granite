@@ -40,7 +40,7 @@ async function postJson(url, headers, payload) {
 const env = readEnvFile('.env');
 const lead = {
   name: 'Teste Custom Email',
-  phone: '(774) 433-2580',
+  phone: '(774) 498-9863',
   email: 'lucascodexy@gmail.com',
   project_type: 'Countertops',
   stone_type: 'Quartz',

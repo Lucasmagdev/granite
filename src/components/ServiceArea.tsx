@@ -82,7 +82,7 @@ export default function ServiceArea() {
               <div>
                 <h3 className="font-serif text-xl text-[#171717] font-medium">{t('service.contact_title')}</h3>
                 <a
-                  href="tel:+17744332580"
+                  href="tel:+17744989863"
                   className="text-[#B91C1C] hover:text-[#7F1D1D] text-sm font-sans font-semibold mt-1 inline-flex"
                 >
                   {t('service.contact_phone')}

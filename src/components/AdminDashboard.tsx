@@ -87,7 +87,7 @@ const defaultBulkMessage = [
   '',
   'We are reaching out about your {projeto} project with {pedra}.',
   '',
-  'If you have any questions or want to move forward, call us at (774) 433-2580.',
+  'If you have any questions or want to move forward, call us at (774) 498-9863.',
 ].join('\n');
 
 const statusConfig: Record<LeadStatus, { label: string; bg: string; text: string; border: string; dot: string }> = {
@@ -129,7 +129,7 @@ function buildCompletionMessage(lead: Lead) {
     '',
     `⭐ ${GOOGLE_REVIEW_URL}`,
     '',
-    '📞 (774) 433-2580',
+    '📞 (774) 498-9863',
     '',
     'Thank you for choosing St. Joseph Granite!',
   ].join('\n');
@@ -289,25 +289,25 @@ const BUILTIN_TEMPLATES: MessageTemplate[] = [
   {
     id: 'followup',
     name: '📞 Follow-up',
-    message: 'Hi {nome}! This is St. Joseph Granite.\n\nWe wanted to follow up on your {projeto} project with {pedra}. Are you still interested? We\'d love to help!\n\n📞 (774) 433-2580',
+    message: 'Hi {nome}! This is St. Joseph Granite.\n\nWe wanted to follow up on your {projeto} project with {pedra}. Are you still interested? We\'d love to help!\n\n📞 (774) 498-9863',
     subject: 'Following up on your {projeto} project — St. Joseph Granite',
   },
   {
     id: 'quote',
     name: '📋 Orçamento Pronto',
-    message: 'Hi {nome}! Your quote for the {projeto} project with {pedra} is ready.\n\nContact us to review the details and move forward.\n\n📞 (774) 433-2580',
+    message: 'Hi {nome}! Your quote for the {projeto} project with {pedra} is ready.\n\nContact us to review the details and move forward.\n\n📞 (774) 498-9863',
     subject: 'Your {projeto} quote is ready — St. Joseph Granite',
   },
   {
     id: 'promo',
     name: '🎉 Promoção',
-    message: 'Hi {nome}! 🎉 Special offer this week at St. Joseph Granite.\n\nContact us about your {projeto} project with {pedra} and ask about our current deals!\n\n📞 (774) 433-2580',
+    message: 'Hi {nome}! 🎉 Special offer this week at St. Joseph Granite.\n\nContact us about your {projeto} project with {pedra} and ask about our current deals!\n\n📞 (774) 498-9863',
     subject: 'Special offer — St. Joseph Granite',
   },
   {
     id: 'reminder',
     name: '🔔 Lembrete',
-    message: 'Hi {nome}, a quick reminder from St. Joseph Granite.\n\nYour {projeto} project with {pedra} is waiting — whenever you\'re ready, just give us a call!\n\n📞 (774) 433-2580',
+    message: 'Hi {nome}, a quick reminder from St. Joseph Granite.\n\nYour {projeto} project with {pedra} is waiting — whenever you\'re ready, just give us a call!\n\n📞 (774) 498-9863',
     subject: 'Reminder about your {projeto} project',
   },
 ];
@@ -388,7 +388,7 @@ function EmailPreview({ message, subject, lead }: { message: string; subject: st
           </div>
           <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{renderedMsg}</p>
           <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 text-center">
-            <p>St. Joseph Granite | (774) 433-2580</p>
+            <p>St. Joseph Granite | (774) 498-9863</p>
           </div>
         </div>
       </div>
