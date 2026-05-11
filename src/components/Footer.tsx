@@ -12,8 +12,8 @@ export default function Footer() {
   ];
 
   const hours = [
-    { day: t('footer.mon_fri'), time: '9:00 AM-5:00 PM' },
-    { day: t('footer.sat'),     time: '9:00 AM-2:00 PM' },
+    { day: t('footer.mon_fri'), time: '8:00 AM - 5:00 PM' },
+    { day: t('footer.sat'),     time: '8:00 AM - 2:00 PM' },
     { day: t('footer.sun'),     time: t('footer.closed') },
   ];
 
@@ -31,11 +31,11 @@ export default function Footer() {
             </p>
             <div className="flex flex-col gap-3">
               <a
-                href="tel:+17744332580"
+                href="tel:+17744989863"
                 className="flex items-center gap-3 text-white/75 hover:text-white text-sm font-sans transition-colors duration-200"
               >
                 <Phone size={14} className="text-white" />
-                (774) 433-2580
+                (774) 498-9863
               </a>
               <div className="flex items-start gap-3 text-white/65 text-sm font-sans">
                 <MapPin size={14} className="text-white shrink-0 mt-0.5" />
