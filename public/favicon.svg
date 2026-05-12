@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#f7f4ee"/>
-  <rect x="58" y="346" width="396" height="34" rx="17" fill="#a90f16"/>
-  <path d="M84 394h344" stroke="#303946" stroke-width="20" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="104" fill="#f8f4ea"/>
+  <rect x="34" y="34" width="444" height="444" rx="86" fill="none" stroke="#24372f" stroke-width="18"/>
+  <path d="M91 354h330" stroke="#a90f16" stroke-width="32" stroke-linecap="round"/>
+  <path d="M122 399h268" stroke="#24372f" stroke-width="20" stroke-linecap="round"/>
   <text
     x="256"
-    y="310"
+    y="304"
     fill="#a90f16"
     font-family="Georgia, Times New Roman, serif"
-    font-size="248"
+    font-size="230"
     font-weight="700"
     text-anchor="middle"
-    letter-spacing="-24"
   >SJ</text>
 </svg>
