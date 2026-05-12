@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Sitemap: https://stjosephgranite.com/sitemap.xml
+Sitemap: https://stjosephmarblegranite.com/sitemap.xml
