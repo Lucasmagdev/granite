@@ -11,9 +11,9 @@ export const messages: Record<Locale, Record<string, string>> = {
     'nav.cta': 'Get Free Estimate',
 
     'hero.location': 'Bellingham, Massachusetts',
-    'hero.heading_main': 'St. Joseph Granite Countertops',
+    'hero.heading_main': 'St. Joseph Granite Countertops in Bellingham',
     'hero.heading_em': 'Made for Real Homes',
-    'hero.desc': 'Custom granite, quartz, marble, quartzite, and porcelain surfaces for kitchens, bathrooms, outdoor kitchens, fireplaces, and firepits. Free estimates, exceptional prices, and over 20 years of experience.',
+    'hero.desc': 'Custom granite, quartz, marble, quartzite, and porcelain surfaces for kitchens, bathrooms, outdoor kitchens, fireplaces, and firepits. Free estimates, exceptional prices, and over 20 years of experience in Bellingham, MA.',
     'hero.address': '10 Mill St, Bellingham, MA 02019',
     'hero.hours': 'Open - Closes 5:00 PM',
     'hero.badge_reviews': '56 Ratings & Reviews',
@@ -67,7 +67,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'service.heading': 'One Showroom Location in Bellingham',
     'service.directions': 'Get Directions',
     'service.contact_title': 'Contact Us',
-    'service.contact_phone': 'Main: (774) 498-9863',
+    'service.contact_phone': '(774) 498-9863',
     'service.feedback_title': 'Customer Feedback',
     'service.feedback_count': '56 ratings and reviews',
     'service.hours_label': 'Hours',
@@ -84,7 +84,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'cta.heading': 'Granite & Quartz at Deep Discounts',
     'cta.desc': 'Ask about current sale colors and remnant countertops. The showroom also offers a free sink with qualifying 50+ square foot projects while promotion details are available.',
     'cta.estimate': 'Request Free Estimate',
-    'cta.call': 'Call (774) 498-9863',
+    'cta.call': 'Call (774) 433-2580',
 
     'footer.desc': 'Local, family-owned stone specialists offering granite, quartz, marble, quartzite, porcelain, remnants, countertops, and custom fireplace work.',
     'footer.languages': 'English and Spanish available',
@@ -153,7 +153,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'form.err_project': 'Choose a project type.',
     'form.err_stone': 'Choose a stone type.',
     'form.err_review': 'Please review the highlighted fields before sending.',
-    'form.err_submit': 'We could not send your request right now. Please call (774) 498-9863.',
+    'form.err_submit': 'We could not send your request right now. Please call (774) 433-2580.',
 
     'mobile.call': 'Call Now',
     'mobile.estimate': 'Free Estimate',
@@ -169,9 +169,9 @@ export const messages: Record<Locale, Record<string, string>> = {
     'nav.cta': 'Orçamento Grátis',
 
     'hero.location': 'Bellingham, Massachusetts',
-    'hero.heading_main': 'Bancadas St. Joseph Granite',
+    'hero.heading_main': 'Bancadas de Granito St. Joseph em Bellingham',
     'hero.heading_em': 'Feitas para Casas Reais',
-    'hero.desc': 'Superfícies personalizadas de granito, quartzo, mármore, quartzito e porcelanato para cozinhas, banheiros, cozinhas externas, lareiras e fogueiras. Orçamentos grátis, preços excepcionais e mais de 20 anos de experiência.',
+    'hero.desc': 'Superfícies personalizadas de granito, quartzo, mármore, quartzito e porcelanato para cozinhas, banheiros, cozinhas externas, lareiras e fogueiras. Orçamentos grátis, preços excepcionais e mais de 20 anos de experiência em Bellingham, MA.',
     'hero.address': '10 Mill St, Bellingham, MA 02019',
     'hero.hours': 'Aberto - Fecha às 5:00 PM',
     'hero.badge_reviews': '56 Avaliações',
@@ -242,7 +242,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'cta.heading': 'Granito e Quartzo com Grandes Descontos',
     'cta.desc': 'Pergunte sobre as cores em promoção e bancadas de retalho. O showroom também oferece uma pia grátis em projetos com mais de 50 pés quadrados enquanto durar a promoção.',
     'cta.estimate': 'Solicitar Orçamento Grátis',
-    'cta.call': 'Ligar (774) 498-9863',
+    'cta.call': 'Ligar (774) 433-2580',
 
     'footer.desc': 'Especialistas em pedra, empresa familiar local, oferecendo granito, quartzo, mármore, quartzito, porcelanato, retalhos, bancadas e trabalhos em lareira.',
     'footer.languages': 'Inglês e Espanhol disponíveis',
@@ -311,7 +311,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'form.err_project': 'Escolha um tipo de projeto.',
     'form.err_stone': 'Escolha um tipo de pedra.',
     'form.err_review': 'Por favor, revise os campos destacados antes de enviar.',
-    'form.err_submit': 'Não foi possível enviar sua solicitação. Ligue para (774) 498-9863.',
+    'form.err_submit': 'Não foi possível enviar sua solicitação. Ligue para (774) 433-2580.',
 
     'mobile.call': 'Ligar',
     'mobile.estimate': 'Orçamento Grátis',
@@ -327,9 +327,9 @@ export const messages: Record<Locale, Record<string, string>> = {
     'nav.cta': 'Presupuesto Gratis',
 
     'hero.location': 'Bellingham, Massachusetts',
-    'hero.heading_main': 'Encimeras St. Joseph Granite',
+    'hero.heading_main': 'Encimeras de Granito St. Joseph en Bellingham',
     'hero.heading_em': 'Hechas para Hogares Reales',
-    'hero.desc': 'Superficies personalizadas de granito, cuarzo, mármol, cuarcita y porcelana para cocinas, baños, cocinas exteriores, chimeneas y fogones. Presupuestos gratis, precios excepcionales y más de 20 años de experiencia.',
+    'hero.desc': 'Superficies personalizadas de granito, cuarzo, mármol, cuarcita y porcelanato para cocinas, baños, cocinas exteriores, chimeneas y fogatas. Estimados gratis, precios excepcionales y más de 20 años de experiencia en Bellingham, MA.',
     'hero.address': '10 Mill St, Bellingham, MA 02019',
     'hero.hours': 'Abierto - Cierra a las 5:00 PM',
     'hero.badge_reviews': '56 Reseñas',
@@ -400,7 +400,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'cta.heading': 'Granito y Cuarzo con Grandes Descuentos',
     'cta.desc': 'Pregunta por los colores en oferta y las encimeras de remanente. El showroom también ofrece un fregadero gratis en proyectos de 50+ pies cuadrados mientras dure la promoción.',
     'cta.estimate': 'Solicitar Presupuesto Gratis',
-    'cta.call': 'Llamar (774) 498-9863',
+    'cta.call': 'Llamar (774) 433-2580',
 
     'footer.desc': 'Especialistas en piedra, empresa familiar local que ofrece granito, cuarzo, mármol, cuarcita, porcelana, remanentes, encimeras y trabajo personalizado en chimeneas.',
     'footer.languages': 'Inglés y Español disponibles',
@@ -469,7 +469,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     'form.err_project': 'Elige un tipo de proyecto.',
     'form.err_stone': 'Elige un tipo de piedra.',
     'form.err_review': 'Por favor, revisa los campos resaltados antes de enviar.',
-    'form.err_submit': 'No pudimos enviar tu solicitud. Por favor llama al (774) 498-9863.',
+    'form.err_submit': 'No pudimos enviar tu solicitud. Por favor llama al (774) 433-2580.',
 
     'mobile.call': 'Llamar',
     'mobile.estimate': 'Presupuesto Gratis',
